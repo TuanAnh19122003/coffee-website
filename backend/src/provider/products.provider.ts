@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 export const productsProvider = [
   {
     provide: 'PRODUCT_REPOSITORY',
-    productFactory: (dataSource: DataSource) => dataSource.getRepository(Product),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Product),
     inject: ['DATA_SOURCE'],
   },
 ]

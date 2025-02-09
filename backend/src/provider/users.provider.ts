@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 export const usersProvider = [
   {
     provide: 'USER_REPOSITORY',
-    usersFactory: (dataSource: DataSource) => dataSource.getRepository(User),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(User),
     inject: ['DATA_SOURCE'],
   },
 ]

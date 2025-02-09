@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role List</title>
+</head>
+<body>
+    <h1>Role List</h1>
+    <a href="/roles/create">Create New Role</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% roles.forEach(role => { %>
+                <tr>
+                    <td><%= role.id %></td>
+                    <td><%= role.name %></td>
+                    <td>
+                        <a href="/roles/<%= role.id %>/edit">Edit</a>
+                        |
+                        <a href="/roles/<%= role.id %>/delete" onclick="return confirm('Bạn có chắc muốn xóa vai trò này?');">
+                            Delete
+                        </a>
+                        |
+                        <a href="/roles/<%= role.id %>/detail">Detail</a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    
+</body>
+</html>

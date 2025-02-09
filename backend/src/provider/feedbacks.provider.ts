@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 export const feedbacksProvider = [
   {
     provide: 'FEEDBACK_REPOSITORY',
-    feedbackFactory: (dataSource: DataSource) => dataSource.getRepository(Feedback),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Feedback),
     inject: ['DATA_SOURCE'],
   },
 ]

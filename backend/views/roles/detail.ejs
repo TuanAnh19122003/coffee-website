@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Detail</title>
+</head>
+<body>
+    <div>
+        <h1>Role Detail</h1>
+        <a href="/roles">Back to Roles</a>
+    </div>
+    
+    <div>
+        <p><strong>ID:</strong> <%= role.id %></p>
+        <p><strong>Name:</strong> <%= role.name %></p>
+    </div>
+
+    <a href="/roles/<%= role.id %>/edit">Edit</a>
+        <a href="/roles/<%= role.id %>/delete" onclick="return confirm('Bạn có chắc muốn xóa vai trò này?');">
+            Delete
+        </a>
+    
+</body>
+</html>
