@@ -11,8 +11,20 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { OrderDetailsModule } from './order_details/order_details.module';
 
+
 @Module({
-  imports: [RolesModule, UsersModule, CategoriesModule, ProductsModule, ProductSizesModule, FeedbacksModule, OrdersModule, PaymentsModule, OrderDetailsModule],
+  imports: [
+    RolesModule, 
+    UsersModule, 
+    CategoriesModule, 
+    ProductsModule, 
+    ProductSizesModule, 
+    FeedbacksModule, 
+    OrdersModule, 
+    PaymentsModule, 
+    OrderDetailsModule,
+    
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

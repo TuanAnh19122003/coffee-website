@@ -14,12 +14,10 @@ export class RolesService {
   async findAll() {
     return await this.rolesRepository.find();
   }
-  
-
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
-    const user = this.rolesRepository.create(createRoleDto);
-    return await this.rolesRepository.save(user);
+    const role = this.rolesRepository.create(createRoleDto);
+    return await this.rolesRepository.save(role);
   }
 
   async findOne(id: number): Promise<Role> {
