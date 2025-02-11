@@ -51,7 +51,7 @@ export class UsersService {
     const user = await this.findOne(id);
     if (file) {
       if(user.image){
-        const oldImagePath = path.join(__dirname, '..', '..', 'public', 'uploads', path.basename(user.image));
+        const oldImagePath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(user.image));
         //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)    
         if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
@@ -71,7 +71,7 @@ export class UsersService {
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id);
     if(user.image){
-      const oldImagePath = path.join(__dirname, '..', '..', 'public', 'uploads', path.basename(user.image));
+      const oldImagePath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(user.image));
       //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)    
       if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);

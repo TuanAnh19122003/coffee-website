@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', {pageTitle: 'Role Management'}) %>
+    <%- include('../layout/head.ejs', {pageTitle: 'Product Management'}) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -11,8 +11,8 @@
                 <%- include('../layout/navbar.ejs') %>
                 <div class="card mt-2" style="margin: 10px;">
                     <div class="card-header d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Role List</h1>
-                        <a href="/roles/create" class="btn btn-primary shadow-sm">
+                        <h1 class="h3 mb-0 text-gray-800">Products List</h1>
+                        <a href="/products/create" class="btn btn-primary shadow-sm">
                             <i class="fa-solid fa-circle-plus"></i> New
                         </a>
                     </div>
@@ -22,24 +22,38 @@
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th style="width: 20%;">Name</th>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Created At</th>
+                                        <th>Updated At</th>
+                                        <th>Category</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% roles.forEach((role,index )=> { %>
+                                    <% products.forEach((product, index) => { %>
                                         <tr>
-                                            <!-- <td><%= role.id %></td> -->
-                                            <td><%= index + 1 %></td>
-                                            <td><%= role.name %></td>
+                                            <!-- <td><%= product.id %></td> -->
+                                            <td><%= index + 1 %> </td>
+                                            <td>
+                                                <% if(product.image){ %>
+                                                    <img src="<%= product.image %>" class="img-fluid img-thumbnail" alt="product Image" style="width: 110px; height: 110px;">
+                                                <% } else{ %>
+                                                    <span>No Image</span>
+                                                <% } %>
+                                            </td>
+                                            <td><%= product.name %></td>
+                                            <td><%= product.createdAt %></td>
+                                            <td><%= product.updatedAt %></td>
+                                            <td><%= product.category ? product.category.name : 'No Category' %></td>
                                             <td class="text-center">
-                                                <a href="/roles/<%= role.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
+                                                <a href="/products/<%= product.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
                                                     <i class="fa-solid fa-pen-to-square"></i> Edit
                                                 </a>
-                                                <a href="/roles/<%= role.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa vai trò này?');">
+                                                <a href="/products/<%= product.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
                                                     <i class="fa-solid fa-trash"></i> Delete
                                                 </a>
-                                                <a href="/roles/<%= role.id %>/detail" class="btn btn-outline-info btn-sm">
+                                                <a href="/products/<%= product.id %>/detail" class="btn btn-outline-info btn-sm">
                                                     <i class="fa-solid fa-circle-info"></i> Details
                                                 </a>
                                             </td>

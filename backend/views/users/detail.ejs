@@ -11,7 +11,7 @@
                 <%- include('../layout/navbar.ejs') %>
                 <div class="card mt-2" style="margin: 10px;">
                     <div class="card-header d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="mb-0">User Details</h1>
+                        <h1 class="mb-0">Details</h1>
                         <a class="btn btn-secondary" onclick="window.history.back();">
                             <i class="fa fa-arrow-left"></i> Back
                         </a>
@@ -25,7 +25,7 @@
                                 <img src="<%= user.image ? user.image : '/path/to/default-image.jpg' %>" alt="User Image" style="max-width: 100px; height: auto;">
                             </dd>
                             <dt class="col-sm-3">Name:</dt>
-                            <dd class="col-sm-9"><%= user.name %></dd>
+                            <dd class="col-sm-9"><%= user.lastName %> <%= user.firstName %></dd>
                             <dt class="col-sm-3">Email:</dt>
                             <dd class="col-sm-9"><%= user.email %></dd>
                             <dt class="col-sm-3">Password:</dt>
