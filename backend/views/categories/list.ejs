@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', {pageTitle: 'Uesr Management'}) %>
+    <%- include('../layout/head.ejs', {pageTitle: 'Category Management'}) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -11,8 +11,8 @@
                 <%- include('../layout/navbar.ejs') %>
                 <div class="card mt-2" style="margin: 10px;">
                     <div class="card-header d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Users List</h1>
-                        <a href="/users/create" class="btn btn-primary shadow-sm">
+                        <h1 class="h3 mb-0 text-gray-800">Category List</h1>
+                        <a href="/categories/create" class="btn btn-primary shadow-sm">
                             <i class="fa-solid fa-circle-plus"></i> New
                         </a>
                     </div>
@@ -22,40 +22,24 @@
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Image</th>
-                                        <th>fullName</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>Role</th>
+                                        <th style="width: 20%;">Name</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% users.forEach((user, index) => { %>
+                                    <% categories.forEach((category,index )=> { %>
                                         <tr>
-                                            <!-- <td><%= user.id %></td> -->
-                                            <td><%= index + 1 %> </td>
-                                            <td>
-                                                <% if(user.image){ %>
-                                                    <img src="<%= user.image %>" class="img-fluid img-thumbnail" alt="User Image" style="width: 110px; height: 110px;">
-                                                <% } else{ %>
-                                                    <span>No Image</span>
-                                                <% } %>
-                                            </td>
-                                            <td><%= user.lastName %> <%= user.firstName %></td>
-                                            <td><%= user.email %></td>
-                                            <td><%= user.phone %></td>
-                                            <td><%= user.address %></td>
-                                            <td><%= user.role ? user.role.name : 'No Role' %></td>
+                                            <!-- <td><%= category.id %></td> -->
+                                            <td><%= index + 1 %></td>
+                                            <td><%= category.name %></td>
                                             <td class="text-center">
-                                                <a href="/users/<%= user.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
+                                                <a href="/categories/<%= category.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
                                                     <i class="fa-solid fa-pen-to-square"></i> Edit
                                                 </a>
-                                                <a href="/users/<%= user.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa người dùng này?');">
+                                                <a href="/categories/<%= category.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa quyền này?');">
                                                     <i class="fa-solid fa-trash"></i> Delete
                                                 </a>
-                                                <a href="/users/<%= user.id %>/detail" class="btn btn-outline-info btn-sm">
+                                                <a href="/categories/<%= category.id %>/detail" class="btn btn-outline-info btn-sm">
                                                     <i class="fa-solid fa-circle-info"></i> Details
                                                 </a>
                                             </td>

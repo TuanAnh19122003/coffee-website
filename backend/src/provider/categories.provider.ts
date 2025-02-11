@@ -1,4 +1,4 @@
-import { Category } from '../../database/entities/category.entity';
+import { Category } from '../database/entities/category.entity';
 import { DataSource } from 'typeorm';
 
 export const categoriesProvider = [

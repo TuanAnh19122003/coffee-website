@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', { pageTitle: 'Create Role' }) %>
+    <%- include('../layout/head.ejs', { pageTitle: 'Edit Category' }) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -11,21 +11,21 @@
                 <%- include('../layout/navbar.ejs') %>
                 <div class="card mt-2" style="margin: 10px;">
                     <div class="card-header d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Create</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Edit</h1>
                         <a class="btn btn-secondary" onclick="window.history.back();">
                             <i class="fa fa-arrow-left"></i> Back
                         </a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <form action="/roles/create" method="post">
+                            <form action="/categories/<%= category.id %>/edit" method="post">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Role Name:</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter role name" required>
+                                    <label for="name" class="form-label">Name:</label>
+                                    <input type="text" class="form-control" id="name" value="<%= category.name %>" name="name" placeholder="Enter role name" required>
                                 </div>
 
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-success">Create</button>
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-warning">Save Changes</button>
                                 </div>
                             </form>
                         </div>
