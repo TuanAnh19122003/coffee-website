@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Query, Res } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -9,9 +9,17 @@ export class CategoriesController {
 
   @Get()
   @Render('categories/list')
-  async getAllCategory() {
-    const categories = await this.categoriesService.findAll();
-    return { categories };
+  async getAllCategory(@Query('page') page: string = '1') {
+    const currentPage = parseInt(page, 10) || 1;
+    const limit = 5;
+    const { categories, totalItems } = await this.categoriesService.findAll(currentPage, limit);
+
+    return {
+      categories,
+      currentPage,
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   @Get('/create')

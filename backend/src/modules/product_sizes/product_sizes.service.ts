@@ -14,19 +14,29 @@ export class ProductSizesService {
     private readonly productsService: ProductsService,
   ){}
 
-  async findAll() {
-    const product_sizes  = await this.productSizesRepository.find({
+  async findAll(page: number, limit: number) {
+    const [ product_sizes, totalItems ]  = await this.productSizesRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,
       relations: ['product']
     });
-    return product_sizes.map((product_size) => ({
-      ...product_size,
-      price: product_size.price ? Format.formatPrice(Number(product_size.price)) : 'N/A',
-    }));
+    return {
+      product_sizes: product_sizes.map(product_size => ({
+        ...product_sizes,
+        price: product_size.price ? Format.formatPrice(Number(product_size.price)) : 'N/A',
+      })),
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit)
+    };
   }
   async getAllProduct(){
-    return await this.productsService.findAll();
+    return await this.productsService.getAll();
   }
-
+  async getAll() {
+    return await this.productSizesRepository.find();
+  }  
   async create(createProductSizeDto: CreateProductSizeDto): Promise<ProductSize> {
     const product_size = this.productSizesRepository.create(createProductSizeDto);
     if(createProductSizeDto.productId){

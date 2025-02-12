@@ -15,7 +15,7 @@ export class UsersService {
     private readonly rolesService: RolesService,
   ){}
   async getAllRoles() {
-    return await this.rolesService.findAll();
+    return await this.rolesService.getAll();
   }
   async create(createUserDto: CreateUserDto, file?: Express.Multer.File): Promise<User> {
     const existingUser = await this.findByEmail(createUserDto.email);
@@ -35,12 +35,23 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find({
-      relations: ['role']
+  async findAll(page: number, limit: number): Promise<any> {
+    const [users, totalItems] = await this.usersRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,
+      relations: ['role'] 
     });
+    return {
+      users,
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit),
+    }
   }
-
+  async getAll() {
+    return await this.usersRepository.find();
+  }
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: {id},

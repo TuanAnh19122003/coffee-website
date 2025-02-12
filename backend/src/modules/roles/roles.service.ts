@@ -11,9 +11,22 @@ export class RolesService {
     private rolesRepository : Repository<Role>
   ) {}
 
-  async findAll() {
-    return await this.rolesRepository.find();
+  async findAll(page: number, limit: number) {
+    const [roles, totalItems] = await this.rolesRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,  
+    });
+    return {
+      roles,
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit),
+    }
   }
+  async getAll() {
+    return await this.rolesRepository.find();
+  } 
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const role = this.rolesRepository.create(createRoleDto);

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, Render, UseInterceptors, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, Render, UseInterceptors, Redirect, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -11,9 +11,17 @@ export class ProductsController {
 
   @Get()
   @Render('products/list')
-  async getAllProduct() {
-    const products = await this.productsService.findAll();
-    return { products };
+  async getAllProduct(@Query('page') page: string = '1') {
+    const currentPage = parseInt(page, 10) || 1;
+    const limit = 5;
+    const { products, totalItems } = await this.productsService.findAll(currentPage, limit);
+
+    return {
+      products,
+      currentPage,
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   @Get('/create')

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Query } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -9,9 +9,17 @@ export class RolesController {
 
   @Get()
   @Render('roles/list')
-  async getAllRole() {
-    const roles = await this.rolesService.findAll();
-    return { roles };
+  async getAllRole(@Query('page') page: string = '1') {
+    const currentPage = parseInt(page, 10) || 1;
+    const limit = 5;
+    const { roles, totalItems } = await this.rolesService.findAll(currentPage, limit);
+
+    return {
+      roles,
+      currentPage,
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   @Get('/create')

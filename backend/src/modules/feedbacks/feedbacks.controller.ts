@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Req, Query } from '@nestjs/common';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
@@ -9,9 +9,17 @@ export class FeedbacksController {
 
   @Get()
   @Render('feedbacks/list')
-  async getAllFeedbacks() {
-    const feedbacks = await this.feedbacksService.findAll();
-    return { feedbacks }
+  async getAllFeedbacks(@Query('page') page: string = '1') {
+    const currentPage = parseInt(page, 10) || 1;
+    const limit = 5;
+    const { feedbacks, totalItems } = await this.feedbacksService.findAll(currentPage, limit);
+
+    return {
+      feedbacks,
+      currentPage,
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   @Get('/create')

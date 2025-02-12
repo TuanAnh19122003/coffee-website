@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from 'src/database/entities/category.entity';
+import { cursorTo } from 'readline';
 
 @Injectable()
 export class CategoriesService {
@@ -11,9 +12,22 @@ export class CategoriesService {
     private categoriesRepository : Repository<Category>
   ){}
 
-  async findAll() {
-    return await this.categoriesRepository.find();
+  async findAll(page: number, limit: number) {
+    const [categories, totalItems] = await this.categoriesRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,  
+    });
+    return {
+      categories,
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit),
+    }
   }
+  async getAll() {
+    return await this.categoriesRepository.find();
+  }  
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const category = this.categoriesRepository.create(createCategoryDto);
     return await this.categoriesRepository.save(category);      

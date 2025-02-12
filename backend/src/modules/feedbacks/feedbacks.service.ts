@@ -12,8 +12,18 @@ export class FeedbacksService {
     private feedbacksRepository : Repository<Feedback>
   ){}
 
-  async findAll() {
-    return await this.feedbacksRepository.find();
+  async findAll(page: number, limit: number) {
+    const [feedbacks, totalItems] = await this.feedbacksRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,  
+    });
+    return {
+      feedbacks,
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit),
+    }
   }
 
   async create(createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {

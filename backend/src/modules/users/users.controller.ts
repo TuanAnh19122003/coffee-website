@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, Render, UseInterceptors, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, Render, UseInterceptors, Redirect, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,15 +12,21 @@ export class UsersController {
 
   @Get()
   @Render('users/list')
-  async getAllUser() {
-    const users = await this.usersService.findAll()
-    //console.log(users);
-    return { users };
+  async getAllUser(@Query('page') page: string = '1') {
+    const currentPage = parseInt(page, 10) || 1;
+    const limit = 5;
+    const { users, totalItems } = await this.usersService.findAll(currentPage, limit);
+
+    return {
+      users,
+      currentPage,
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
   async getRoles() {
     return await this.usersService.getAllRoles();
   }
-
 
   @Get('/create')
   @Render('users/create')

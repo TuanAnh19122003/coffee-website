@@ -30,7 +30,7 @@
                                     <% categories.forEach((category,index )=> { %>
                                         <tr>
                                             <!-- <td><%= category.id %></td> -->
-                                            <td><%= index + 1 %></td>
+                                            <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
                                             <td><%= category.name %></td>
                                             <td class="text-center">
                                                 <a href="/categories/<%= category.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
@@ -50,6 +50,8 @@
                         </div>
                         
                     </div>
+                    <!-- pagination -->
+                    <%- include('../layout/pagination.ejs') %>
                 </div>
             </div>
             <!-- Footer -->

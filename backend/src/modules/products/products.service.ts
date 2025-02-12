@@ -17,19 +17,31 @@ export class ProductsService {
     private readonly categoriesService: CategoriesService,
   ){}
 
-  async findAll() {
-    const products =  await this.productsRepository.find({
-      relations: ['category']
+  async findAll(page: number, limit: number) {
+    const [products, totalItems] = await this.productsRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,
+      relations: ['category']  
     });
-    return products.map((product) => ({
-      ...product,
-      createdAt: product.createdAt ? Format.formatDateTime(product.createdAt) : null,
-      updatedAt: product.updatedAt ? Format.formatDateTime(product.updatedAt) : null
-    }));
+    return {
+      products: products.map(product => ({
+        ...product,
+        createdAt: product.createdAt ? Format.formatDateTime(product.createdAt) : null,
+        updatedAt: product.updatedAt ? Format.formatDateTime(product.updatedAt) : null
+      })),
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit)
+    };
   }
-  async getAllCategory(){
-    return await this.categoriesService.findAll();
+  async getAll() {
+    return await this.productsRepository.find();
+  }  
+  async getAllCategory() {
+    return await this.categoriesService.getAll(); // Gọi một phương thức khác không có phân trang
   }
+  
 
   async create(createProductDto: CreateProductDto, file?: Express.Multer.File): Promise<Product> {
     const product = this.productsRepository.create(createProductDto);
