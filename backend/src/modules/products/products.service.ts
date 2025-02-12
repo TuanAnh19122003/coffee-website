@@ -4,7 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from 'src/database/entities/product.entity';
 import { CategoriesService } from '../categories/categories.service';
-import { FormatDateTime } from 'src/utils/formatDateTime';
+import { Format } from 'src/utils/format';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -23,8 +23,8 @@ export class ProductsService {
     });
     return products.map((product) => ({
       ...product,
-      createdAt: product.createdAt ? FormatDateTime.formatDateTime(product.createdAt) : null,
-      updatedAt: product.updatedAt ? FormatDateTime.formatDateTime(product.updatedAt) : null
+      createdAt: product.createdAt ? Format.formatDateTime(product.createdAt) : null,
+      updatedAt: product.updatedAt ? Format.formatDateTime(product.updatedAt) : null
     }));
   }
   async getAllCategory(){

@@ -3,7 +3,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FormatDateTime } from 'src/utils/formatDateTime';
+import { Format } from 'src/utils/format';
 
 @Controller('products')
 export class ProductsController {
@@ -65,8 +65,8 @@ export class ProductsController {
         categories,
         product: {
           ...product,
-          createdAt: product.createdAt ? FormatDateTime.formatDateTime(product.createdAt) : 'N/A',
-          updatedAt: product.updatedAt ? FormatDateTime.formatDateTime(product.updatedAt) : 'N/A',
+          createdAt: product.createdAt ? Format.formatDateTime(product.createdAt) : 'N/A',
+          updatedAt: product.updatedAt ? Format.formatDateTime(product.updatedAt) : 'N/A',
         }
       };
     }
