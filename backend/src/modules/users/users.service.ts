@@ -1,4 +1,4 @@
-import { Injectable,Inject, NotFoundException, ConsoleLogger } from '@nestjs/common';
+import { Injectable,Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,6 +18,10 @@ export class UsersService {
     return await this.rolesService.findAll();
   }
   async create(createUserDto: CreateUserDto, file?: Express.Multer.File): Promise<User> {
+    const existingUser = await this.findByEmail(createUserDto.email);
+    if (existingUser) {
+      throw new BadRequestException('Email đã tồn tại. Vui lòng sử dụng email khác.');
+    }
     const user = this.usersRepository.create(createUserDto);
     if (file) {
       user.image = `/uploads/${file.filename}`; 
@@ -27,7 +31,9 @@ export class UsersService {
     }
     return await this.usersRepository.save(user);
   }
-
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
 
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find({
@@ -78,6 +84,6 @@ export class UsersService {
           console.log("ảnh và thông tin của người dùng đã được xóa")
       }
     }
-    await this.usersRepository.delete(user);
+    await this.usersRepository.delete({id});
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Req } from '@nestjs/common';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
@@ -7,28 +7,48 @@ import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 export class FeedbacksController {
   constructor(private readonly feedbacksService: FeedbacksService) {}
 
-  @Post()
-  create(@Body() createFeedbackDto: CreateFeedbackDto) {
+  @Get()
+  @Render('feedbacks/list')
+  async getAllFeedbacks() {
+    const feedbacks = await this.feedbacksService.findAll();
+    return { feedbacks }
+  }
+
+  @Get('/create')
+  @Render('feedbacks/create')
+  async showCreateForm() {
+    return { }
+  }
+
+  @Post('/create')
+  @Redirect('/feedbacks')
+  async createFeedback(@Body() createFeedbackDto: CreateFeedbackDto) {
     return this.feedbacksService.create(createFeedbackDto);
   }
 
-  @Get()
-  findAll() {
-    return this.feedbacksService.findAll();
+  @Get('/:id/edit')
+  @Render('feedbacks/edit')
+  async showEditForm(@Param('id') id: number) {
+    const feedback = await this.feedbacksService.findOne(id)
+    return { feedback };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.feedbacksService.findOne(+id);
+  @Post('/:id/edit')
+  @Redirect('/feedbacks')
+  edit(@Param('id') id: number, @Body() updateFeedbackDto: UpdateFeedbackDto, @Req() req: Request) {
+    return this.feedbacksService.update(id, updateFeedbackDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFeedbackDto: UpdateFeedbackDto) {
-    return this.feedbacksService.update(+id, updateFeedbackDto);
+  @Get('/:id/delete')
+  @Redirect('/feedbacks')
+  async remove(@Param('id') id: number) {
+    return this.feedbacksService.remove(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.feedbacksService.remove(+id);
+  @Get('/:id/detail')
+  @Render('feedbacks/detail')
+  async detail(@Param('id') id: number) {
+    const feedback = await this.feedbacksService.findOne(id)
+    return { feedback };
   }
 }

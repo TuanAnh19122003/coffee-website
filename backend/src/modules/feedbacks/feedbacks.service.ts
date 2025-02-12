@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
+import { Feedback } from 'src/database/entities/feedback.entity';
+
 
 @Injectable()
 export class FeedbacksService {
-  create(createFeedbackDto: CreateFeedbackDto) {
-    return 'This action adds a new feedback';
+  constructor(
+    @Inject('FEEDBACK_REPOSITORY')
+    private feedbacksRepository : Repository<Feedback>
+  ){}
+
+  async findAll() {
+    return await this.feedbacksRepository.find();
   }
 
-  findAll() {
-    return `This action returns all feedbacks`;
+  async create(createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {
+    const feedback = this.feedbacksRepository.create(createFeedbackDto);
+    return await this.feedbacksRepository.save(feedback);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} feedback`;
+  async findOne(id: number): Promise<Feedback> {
+
+    const feedback = await this.feedbacksRepository.findOne({where: {id}});
+    if(!feedback){
+      throw new NotFoundException(`Role with ID ${id} not found`);
+    }
+    return feedback;
+  }
+  async update(id: number, updateFeedbackDto: UpdateFeedbackDto): Promise<Feedback | null>{
+    const feedback = await this.findOne(id);
+    if(!feedback){
+      throw new NotFoundException(`Role with ID ${id} not found`);
+    }
+    await this.feedbacksRepository.update(id, updateFeedbackDto);
+    return { ...feedback, ...updateFeedbackDto}
   }
 
-  update(id: number, updateFeedbackDto: UpdateFeedbackDto) {
-    return `This action updates a #${id} feedback`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} feedback`;
+  async remove(id: number): Promise<void> {
+    await this.feedbacksRepository.delete({id})
   }
 }

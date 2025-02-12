@@ -5,7 +5,7 @@ export class Feedback {
     @PrimaryGeneratedColumn()
     id?: number;
   
-    @Column({ type: "nvarchar", length: 255 })
+    @Column({ type: 'varchar', length: 255 })
     firstName?: string;
   
     @Column({ type: "nvarchar", length: 255 })
