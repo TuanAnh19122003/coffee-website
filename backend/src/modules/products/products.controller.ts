@@ -59,7 +59,17 @@ export class ProductsController {
   @Render('products/detail')
   async detail(@Param('id') id:number) {
     const categories = await this.productsService.getAllCategory();
-    const product = await this.productsService.findOne(id)
+    const product = await this.productsService.findOne(id);
+    if(product){
+      return {
+        categories,
+        product: {
+          ...product,
+          createdAt: product.createdAt ? FormatDateTime.formatDateTime(product.createdAt) : 'N/A',
+          updatedAt: product.updatedAt ? FormatDateTime.formatDateTime(product.updatedAt) : 'N/A',
+        }
+      };
+    }
     return { categories, product };
   }
 }
