@@ -35,7 +35,7 @@
                                     <% users.forEach((user, index) => { %>
                                         <tr>
                                             <!-- <td><%= user.id %></td> -->
-                                            <td><%= index + 1 %> </td>
+                                            <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
                                             <td>
                                                 <% if(user.image){ %>
                                                     <img src="<%= user.image %>" class="img-fluid img-thumbnail" alt="User Image" style="width: 110px; height: 110px;">

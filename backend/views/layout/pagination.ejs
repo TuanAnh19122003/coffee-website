@@ -1,25 +1,38 @@
-<div class="card-footer">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <% let totalPages = Math.ceil(totalItems / itemsPerPage); %>
-            
-            <% if (currentPage > 1) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= itemsPerPage %>">Previous</a>
-                </li>
-            <% } %>
-    
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                    <a class="page-link" href="?page=<%= i %>&limit=<%= itemsPerPage %>"><%= i %></a>
-                </li>
-            <% } %>
-    
-            <% if (currentPage < totalPages) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= itemsPerPage %>">Next</a>
-                </li>
-            <% } %>
-        </ul>
-    </nav>
-</div>
+<ul class="pagination justify-content-center">
+    <% let totalPages = Math.ceil(totalItems / itemsPerPage); %>
+
+    <!-- Nút về trang đầu -->
+    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=1&limit=<%= itemsPerPage %>" aria-label="First">
+            &laquo; <!-- « -->
+        </a>
+    </li>
+
+    <!-- Nút trang trước -->
+    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= itemsPerPage %>" aria-label="Previous">
+            &lt; <!-- < -->
+        </a>
+    </li>
+
+    <!-- Hiển thị số trang -->
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>&limit=<%= itemsPerPage %>"><%= i %></a>
+        </li>
+    <% } %>
+
+    <!-- Nút trang sau -->
+    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= itemsPerPage %>" aria-label="Next">
+            &gt; <!-- > -->
+        </a>
+    </li>
+
+    <!-- Nút về trang cuối -->
+    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link" href="?page=<%= totalPages %>&limit=<%= itemsPerPage %>" aria-label="Last">
+            &raquo; <!-- » -->
+        </a>
+    </li>
+</ul>

@@ -32,7 +32,7 @@
                                     <% product_sizes.forEach((product_size,index )=> { %>
                                         <tr>
                                             <!-- <td><%= product_size.id %></td> -->
-                                            <td><%= index + 1 %></td>
+                                            <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
                                             <td><%= product_size.size %></td>
                                             <td><%= product_size.price %></td>
                                             <td><%= product_size.product ? product_size.product.name : 'No product' %></td>

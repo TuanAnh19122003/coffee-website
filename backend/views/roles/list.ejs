@@ -30,7 +30,7 @@
                                     <% roles.forEach((role,index )=> { %>
                                         <tr>
                                             <!-- <td><%= role.id %></td> -->
-                                            <td><%= index + 1 %></td>
+                                            <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
                                             <td><%= role.name %></td>
                                             <td class="text-center">
                                                 <a href="/roles/<%= role.id %>/edit" class="btn btn-outline-warning btn-sm me-1">

@@ -34,7 +34,7 @@
                                     <% products.forEach((product, index) => { %>
                                         <tr>
                                             <!-- <td><%= product.id %></td> -->
-                                            <td><%= index + 1 %> </td>
+                                            <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
                                             <td>
                                                 <% if(product.image){ %>
                                                     <img src="<%= product.image %>" class="img-fluid img-thumbnail" alt="product Image" style="width: 110px; height: 110px;">

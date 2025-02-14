@@ -22,7 +22,7 @@ export class ProductSizesService {
     });
     return {
       product_sizes: product_sizes.map(product_size => ({
-        ...product_sizes,
+        ...product_size,
         price: product_size.price ? Format.formatPrice(Number(product_size.price)) : 'N/A',
       })),
       totalItems,
