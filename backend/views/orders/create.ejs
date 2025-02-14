@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', { pageTitle: 'Create Product' }) %>
+    <%- include('../layout/head.ejs', { pageTitle: 'Create Order' }) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -18,36 +18,32 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <form action="/products/create" method="post" enctype="multipart/form-data">
+                            <form action="/orders/create" method="post">
 
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Name:</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Last Name" required>
+                                    <label for="name" class="form-label">Address:</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Last address" required>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="discount" class="form-label">Discount:</label>
-                                    <input type="number" class="form-control" id="discount" name="discount" placeholder="Enter discount" required>
+                                    <label for="note" class="form-label">Note:</label>
+                                    <textarea type="number" class="form-control" id="note" name="note" placeholder="Enter note"></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="total" class="form-label">Total:</label>
+                                    <input type="number" class="form-control" id="total" name="total" placeholder="Enter total">
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label for="image" class="form-label">Upload Image:</label>
-                                    <input type="file" class="form-control" name="image" />
-                                </div>
                                 
                                 <div class="mb-3">
-                                    <label for="category" class="form-label">Category:</label>
-                                    <select class="form-select" id="category" name="category" required>
-                                        <option value="" disabled selected> Select a Category </option>
-                                        <% categories.forEach(category => { %>
-                                            <option value="<%= category.id %>"><%= category.name %></option>
+                                    <label for="user" class="form-label">user:</label>
+                                    <select class="form-select" id="userId" name="userId" required>
+                                        <option value="" disabled selected> Select a user </option>
+                                        <% users.forEach(user => { %>
+                                            <option value="<%= user.id %>"><%= user.lastName %> <%= user.firstName %></option>
                                         <% }) %>
                                     </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Description:</label>
-                                    <textarea class="form-control" id="description" name="description" placeholder="Enter description"></textarea>
                                 </div>
                                 
                                 <div class="d-flex justify-content-end">

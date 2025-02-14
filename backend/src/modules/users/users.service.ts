@@ -14,6 +14,21 @@ export class UsersService {
     private readonly usersRepository: Repository<User>, 
     private readonly rolesService: RolesService,
   ){}
+
+  async findAll(page: number, limit: number): Promise<any> {
+    const [users, totalItems] = await this.usersRepository.findAndCount({
+      skip: (page - 1) * limit,  
+      take: limit,
+      relations: ['role'] 
+    });
+    return {
+      users,
+      totalItems,
+      currentPage: page,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(totalItems / limit),
+    }
+  }
   async getAllRoles() {
     return await this.rolesService.getAll();
   }
@@ -35,20 +50,7 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async findAll(page: number, limit: number): Promise<any> {
-    const [users, totalItems] = await this.usersRepository.findAndCount({
-      skip: (page - 1) * limit,  
-      take: limit,
-      relations: ['role'] 
-    });
-    return {
-      users,
-      totalItems,
-      currentPage: page,
-      itemsPerPage: limit,
-      totalPages: Math.ceil(totalItems / limit),
-    }
-  }
+
   async getAll() {
     return await this.usersRepository.find();
   }

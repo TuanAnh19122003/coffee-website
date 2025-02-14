@@ -18,5 +18,6 @@ import { multerConfig } from 'src/config/multer-config';
   providers: [
     ...usersProvider,
     UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

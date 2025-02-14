@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, CreateDateColumn } from "typeorm";
 import { User } from "src/database/entities/user.entity";
 import { Payment } from "src/database/entities/payment.entity";
 import { OrderDetail } from "src/database/entities/order_detail.entity";
+import { OrderStatus } from "src/modules/orders/order-status.enum";
 
 @Entity({ name: "orders" })
 export class Order {
@@ -11,16 +12,7 @@ export class Order {
     @ManyToOne(() => User, user => user.orders)
     user?: User;
 
-    @Column({ type: "nvarchar", length: 255 })
-    fullname?: string;
-
-    @Column({ type: "nvarchar", length: 255 })
-    email?: string;
-
-    @Column({ type: "nvarchar", length: 10 })
-    phoneNumber?: string;
-
-    @Column({ type: "nvarchar", length: 255 })
+    @Column({ type: "nvarchar", length: 255, nullable: true })
     address?: string;
 
     @Column({ type: "nvarchar", length: 500, nullable: true })
@@ -29,11 +21,11 @@ export class Order {
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     total?: number;
 
-    @Column({ type: "int", default: 0 })
-    status?: number;  // 0: pending, 1: approved
+    @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.PENDING })
+    status?: OrderStatus;
 
-    @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
-    order_date?: Date;
+    @CreateDateColumn({ type: "timestamp" })
+    order_date?: Date;    
 
     @OneToMany(() => OrderDetail, orderDetails => orderDetails.order)
     orderDetails?: OrderDetail[];
