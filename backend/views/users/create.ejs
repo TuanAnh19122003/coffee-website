@@ -56,7 +56,7 @@
                                 
                                 <div class="mb-3">
                                     <label for="role" class="form-label">Role:</label>
-                                    <select class="form-select" id="role" name="role" required>
+                                    <select class="form-select" id="roleId" name="roleId" required>
                                         <option value="" disabled selected> Select a Role </option>
                                         <% roles.forEach(role => { %>
                                             <option value="<%= role.id %>"><%= role.name %></option>

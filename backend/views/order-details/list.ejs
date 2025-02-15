@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', {pageTitle: 'Order Management'}) %>
+    <%- include('../layout/head.ejs', {pageTitle: 'orderDetail Management'}) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -11,8 +11,8 @@
                 <%- include('../layout/navbar.ejs') %>
                 <div class="card mt-2" style="margin: 10px;">
                     <div class="card-header d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">orders List</h1>
-                        <a href="/orders/create" class="btn btn-primary shadow-sm">
+                        <h1 class="h3 mb-0 text-gray-800">orderDetails List</h1>
+                        <a href="/order-details/create" class="btn btn-primary shadow-sm">
                             <i class="fa-solid fa-circle-plus"></i> New
                         </a>
                     </div>
@@ -22,35 +22,35 @@
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Full Name</th>
-                                        <th>Phone</th>
+                                        <th>Size</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
                                         <th>Total</th>
-                                        <th>Address</th>
-                                        <th>Order date</th>
-                                        <th>Status</th>
+                                        <th>Order</th>
+                                        <th>Product</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% orders.forEach((order, index) => { %>
+                                    <% orderDetails.forEach((orderDetail, index) => { %>
                                         <tr>
                                             <td><%= (currentPage - 1) * itemsPerPage + index + 1 %></td>
+                                            <td><%= orderDetail.size %></td>
+                                            <td><%= orderDetail.price %></td>
+                                            <td><%= orderDetail.num %></td>
+                                            <td><%= orderDetail.totalPrice %></td>
                                             <td>
-                                                <%= order.user.lastName %> <%= order.user.firstName %>
+                                                <%= orderDetail.order.user.lastName %> <%= orderDetail.order.user.firstName %>
                                             </td>
-                                            <td><%= order.user.phone %></td>
-                                            <td><%= order.total %></td>
-                                            <td><%= order.address %></td>
-                                            <td><%= order.order_date %></td>
-                                            <td><%= order.status %></td>
+                                            <td><%= orderDetail.product.name %></td>
                                             <td class="text-center">
-                                                <a href="/orders/<%= order.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
+                                                <a href="/order-details/<%= orderDetail.id %>/edit" class="btn btn-outline-warning btn-sm me-1">
                                                     <i class="fa-solid fa-pen-to-square"></i> Edit
                                                 </a>
-                                                <a href="/orders/<%= order.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa người dùng này?');">
+                                                <a href="/order-details/<%= orderDetail.id %>/delete" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Bạn có chắc muốn xóa chi tiết này?');">
                                                     <i class="fa-solid fa-trash"></i> Delete
                                                 </a>
-                                                <a href="/orders/<%= order.id %>/detail" class="btn btn-outline-info btn-sm">
+                                                <a href="/order-details/<%= orderDetail.id %>/detail" class="btn btn-outline-info btn-sm">
                                                     <i class="fa-solid fa-circle-info"></i> Details
                                                 </a>
                                             </td>

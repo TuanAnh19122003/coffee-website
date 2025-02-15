@@ -37,7 +37,7 @@
                                 
                                 <div class="mb-3">
                                     <label for="category" class="form-label">Category:</label>
-                                    <select class="form-select" id="category" name="category" required>
+                                    <select class="form-select" id="categoryId" name="categoryId" required>
                                         <option value="" disabled selected> Select a Category </option>
                                         <% categories.forEach(category => { %>
                                             <option value="<%= category.id %>"><%= category.name %></option>

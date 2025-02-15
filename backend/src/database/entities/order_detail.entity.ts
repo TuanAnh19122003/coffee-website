@@ -21,7 +21,4 @@ export class OrderDetail {
   
     @Column({ type: "int" })
     num?: number;
-  
-    @Column({ type: "decimal", precision: 10, scale: 2 })
-    total?: number;
 }

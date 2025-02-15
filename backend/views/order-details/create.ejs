@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('../layout/head.ejs', { pageTitle: 'Create Product Size' }) %>
+    <%- include('../layout/head.ejs', { pageTitle: 'Create Order Detail' }) %>
 <body>
     <div id="wrapper">
         <%- include('../layout/sidebar.ejs') %>
@@ -18,27 +18,43 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <form action="/product-sizes/create" method="post">
+                            <form action="/order-details/create" method="post">
                                 <div class="mb-3">
-                                    <label for="size" class="form-label">Size:</label>
-                                    <input type="text" class="form-control" id="size" name="size" size="size" placeholder="Enter Size" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="price" class="form-label">Price:</label>
-                                    <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="Enter Price" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="product" class="form-label">product:</label>
-                                    <select class="form-select" id="productId" name="productId" required>
-                                        <option value="" disabled selected> Select a product </option>
-                                        <% products.forEach(product => { %>
-                                            <option value="<%= product.id %>"><%= product.name %></option>
+                                    <label for="order" class="form-label">Order:</label>
+                                    <select class="form-select" id="orderId" name="orderId" required>
+                                        <option value="" disabled selected> Select a order </option>
+                                        <% orders.forEach(order => { %>
+                                            <option value="<%= order.id %>"><%= order.id %></option>
                                         <% }) %>
                                     </select>
                                 </div>
 
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">Size:</label>
+                                    <input type="text" class="form-control" id="size" name="size" placeholder="Enter Last size" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price:</label>
+                                    <input type="number" class="form-control" id="price" name="price" placeholder="Enter Last price" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="num" class="form-label">Quantity:</label>
+                                    <input type="number" class="form-control" id="num" name="num" placeholder="Enter num">
+                                </div>
+                                
+                                
+                                <div class="mb-3">
+                                    <label for="product" class="form-label">Product:</label>
+                                    <select class="form-select" id="productId" name="productId" required>
+                                        <option value="" disabled selected> Select a product </option>
+                                        <% products.forEach(product => { %>
+                                            <option value="<%= product.id %>"><%= product.name%></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                
                                 <div class="d-flex justify-content-end">
                                     <button type="submit" class="btn btn-success">Create</button>
                                 </div>

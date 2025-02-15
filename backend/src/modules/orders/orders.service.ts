@@ -50,14 +50,14 @@ export class OrdersService {
 
 
   async findOne(id: number): Promise<Order> {
-    const user = await this.ordersRepository.findOne({
+    const order = await this.ordersRepository.findOne({
       where: {id},
       relations:['user']
     });
-    if(!user){
+    if(!order){
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
-    return user;
+    return order;
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | null> {

@@ -12,5 +12,6 @@ import { ordersProvider } from 'src/provider/orders.provider';
     ...ordersProvider,
     OrdersService
   ],
+  exports: [OrdersService]
 })
 export class OrdersModule {}
