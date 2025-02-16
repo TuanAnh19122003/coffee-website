@@ -38,13 +38,21 @@ export class PaymentsService {
     return await this.ordersService.getAll();
   }
   async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
-    const payment = this.paymentsRepository.create(createPaymentDto);
-    if (createPaymentDto.orderId) {
-      payment.order = await this.ordersService.findOne(createPaymentDto.orderId);
-    } else{
-      throw new Error("Payment is required");
+    if (!createPaymentDto.orderId) {
+      throw new Error("Order ID is required for payment");
     }
-  
+
+    const order = await this.ordersService.findOne(createPaymentDto.orderId);
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${createPaymentDto.orderId} not found`);
+    }
+
+    const payment = this.paymentsRepository.create({
+      ...createPaymentDto,
+      order,
+      paidAmount: order.total,
+    });
+    console.log(payment)
     return await this.paymentsRepository.save(payment);
   }
 
@@ -60,15 +68,26 @@ export class PaymentsService {
   }
 
   async update(id: number, updatePaymentDto: UpdatePaymentDto): Promise<Payment | null> {
-    const paymnet = await this.findOne(id);
-    if(!paymnet){
+    const payment = await this.findOne(id);
+    if (!payment) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
     }
+
+    // Nếu có orderId, tìm lại order mới
     if (updatePaymentDto.orderId) {
-      paymnet.order = await this.ordersService.findOne(updatePaymentDto.orderId);
+      payment.order = await this.ordersService.findOne(updatePaymentDto.orderId);
+      if (!payment.order) {
+        throw new NotFoundException(`Order with ID ${updatePaymentDto.orderId} not found`);
+      }
     }
-    Object.assign(paymnet, updatePaymentDto);
-    return await this.paymentsRepository.save(paymnet);
+
+    // Cập nhật số tiền từ order
+    if (payment.order) {
+      payment.paidAmount = payment.order.total;
+    }
+
+    Object.assign(payment, updatePaymentDto);
+    return await this.paymentsRepository.save(payment);
   }
 
   async remove(id: number): Promise<void> {
