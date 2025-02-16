@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, CreateDateColumn, JoinColumn } from "typeorm";
 import { User } from "src/database/entities/user.entity";
 import { Payment } from "src/database/entities/payment.entity";
 import { OrderDetail } from "src/database/entities/order_detail.entity";
@@ -18,8 +18,8 @@ export class Order {
     @Column({ type: "nvarchar", length: 500, nullable: true })
     note?: string;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
-    total?: number;
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    total?: number;    
 
     @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.PENDING })
     status?: OrderStatus;
@@ -31,5 +31,6 @@ export class Order {
     orderDetails?: OrderDetail[];
 
     @OneToOne(() => Payment, payment => payment.order)
+    @JoinColumn()
     payment?: Payment;
 }

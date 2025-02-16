@@ -57,6 +57,7 @@ export class OrdersController {
   async remove(@Param('id') id: number) {
     return this.ordersService.remove(id);
   }
+  
   @Get('/:id/detail')
   @Render('orders/detail')
   async detail(@Param('id') id:number) {

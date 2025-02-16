@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../layout/head.ejs', { pageTitle : 'Edit Payment' }) %>
+<body>
+    <div id="wrapper">
+        <%- include('../layout/sidebar.ejs') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- navbar.ejs -->
+                <%- include('../layout/navbar.ejs') %>
+                <div class="card mt-2" style="margin: 10px;">
+                    <div class="card-header d-flex align-items-center justify-content-between mb-4">
+                        <h1 class="mb-0">Edit</h1>
+                        <a class="btn btn-secondary" onclick="window.history.back();">
+                            <i class="fa fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <form action="/payments/<%= payment.id %>/edit" method="post">
+
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method:</label>
+                                <input type="text" class="form-control" id="paymentMethod" value="<%= payment.paymentMethod %>" name="paymentMethod" placeholder="Enter paymentMethod" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="transactionId" class="form-label">transactionId:</label>
+                                <input type="text" class="form-control" id="transactionId" value="<%= payment.transactionId %>" name="transactionId" placeholder="Enter transactionId" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="paymentStatus" class="form-label">Payment Status:</label>
+                                <input type="number" class="form-control" id="paymentStatus" value="<%= payment.paymentStatus %>" name="paymentStatus" placeholder="Enter Payment Status" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="order" class="form-label">Order:</label>
+                                <select class="form-select" name="orderId" id="orderId">
+                                    <option value="" disabled selected> Select a order </option>
+                                    <% orders.forEach(order =>{ %>
+                                        <option value="<%= order.id %>" <%= payment.order && payment.order.id === order.id ? 'selected' : '' %>>
+                                            <%= order.id %>
+                                        </option>                                        
+                                    <% }) %>
+                                </select>
+                            </div>
+                            
+        
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-warning">Save Changes</button>
+                            </div>
+        
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <%- include('../layout/footer.ejs') %>
+        </div>
+    </div>
+    
+</body>
+</html>

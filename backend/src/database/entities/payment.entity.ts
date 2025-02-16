@@ -19,6 +19,6 @@ export class Payment {
     @Column({ default: 0 })
     paymentStatus?: number;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
-    paidAmount?: number;
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    paidAmount?: number;    
 }

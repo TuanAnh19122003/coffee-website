@@ -7,10 +7,11 @@ export class OrderDetail {
     @PrimaryGeneratedColumn()
     id?: number;
   
-    @ManyToOne(() => Order, order => order.orderDetails)
+    @ManyToOne(() => Order, order => order.orderDetails, { onDelete: 'CASCADE' })
     order?: Order;
   
     @ManyToOne(() => Product)
+    @JoinColumn()
     product?: Product;
   
     @Column({ type: "nvarchar", length: 50 })
