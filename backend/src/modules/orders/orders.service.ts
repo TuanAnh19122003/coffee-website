@@ -63,7 +63,7 @@ export class OrdersService {
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | null> {
     const order = await this.findOne(id);
     if(!order){
-      throw new NotFoundException(`Order Size with ID ${id} not found`);
+      throw new NotFoundException(`Order with ID ${id} not found`);
     }
     if (updateOrderDto.userId) {
       order.user = await this.usersService.findOne(updateOrderDto.userId);

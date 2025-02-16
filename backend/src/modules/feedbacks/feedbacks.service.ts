@@ -35,14 +35,14 @@ export class FeedbacksService {
 
     const feedback = await this.feedbacksRepository.findOne({where: {id}});
     if(!feedback){
-      throw new NotFoundException(`Role with ID ${id} not found`);
+      throw new NotFoundException(`Feedback with ID ${id} not found`);
     }
     return feedback;
   }
   async update(id: number, updateFeedbackDto: UpdateFeedbackDto): Promise<Feedback | null>{
     const feedback = await this.findOne(id);
     if(!feedback){
-      throw new NotFoundException(`Role with ID ${id} not found`);
+      throw new NotFoundException(`Feedback with ID ${id} not found`);
     }
     await this.feedbacksRepository.update(id, updateFeedbackDto);
     return { ...feedback, ...updateFeedbackDto}

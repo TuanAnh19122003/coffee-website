@@ -24,11 +24,11 @@ export class OrderDetailsService {
     return {
       orderDetails: orderDetails.map(orderDetail => {
         const price = orderDetail.price ? Number(orderDetail.price) : 0;
-        const quantity = orderDetail.num ?? 1; // Nếu `num` không có thì mặc định là 1
+        const quantity = orderDetail.num ?? 1;
         return {
           ...orderDetail,
           price: Format.formatPrice(price),
-          totalPrice: Format.formatPrice(price * quantity) // Tính tổng tiền từng chi tiết đơn hàng
+          totalPrice: Format.formatPrice(price * quantity)
         };
       }),
       totalItems,
@@ -81,7 +81,7 @@ export class OrderDetailsService {
   async update(id: number,updateOrderDetailDto: UpdateOrderDetailDto): Promise<OrderDetail | null> {
     const orderDetail = await this.findOne(id);
     if(!orderDetail){
-      throw new NotFoundException(`Order Size with ID ${id} not found`);
+      throw new NotFoundException(`Order Detail with ID ${id} not found`);
     }
     if (updateOrderDetailDto.productId) {
       orderDetail.product = await this.productsService.findOne(updateOrderDetailDto.productId);

@@ -50,7 +50,6 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-
   async getAll() {
     return await this.usersRepository.find();
   }

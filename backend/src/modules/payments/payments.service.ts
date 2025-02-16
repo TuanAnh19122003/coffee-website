@@ -42,7 +42,7 @@ export class PaymentsService {
     if (createPaymentDto.orderId) {
       payment.order = await this.ordersService.findOne(createPaymentDto.orderId);
     } else{
-      throw new Error("Order is required");
+      throw new Error("Payment is required");
     }
   
     return await this.paymentsRepository.save(payment);
@@ -62,7 +62,7 @@ export class PaymentsService {
   async update(id: number, updatePaymentDto: UpdatePaymentDto): Promise<Payment | null> {
     const paymnet = await this.findOne(id);
     if(!paymnet){
-      throw new NotFoundException(`Order Size with ID ${id} not found`);
+      throw new NotFoundException(`Payment with ID ${id} not found`);
     }
     if (updatePaymentDto.orderId) {
       paymnet.order = await this.ordersService.findOne(updatePaymentDto.orderId);

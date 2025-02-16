@@ -39,7 +39,7 @@ export class ProductsService {
     return await this.productsRepository.find();
   }  
   async getAllCategory() {
-    return await this.categoriesService.getAll(); // Gọi một phương thức khác không có phân trang
+    return await this.categoriesService.getAll();
   }
   
 
@@ -60,7 +60,7 @@ export class ProductsService {
       relations: ['category']
     });
     if(!product){
-      throw new NotFoundException(`Product witd d ${id} not found`);
+      throw new NotFoundException(`Product witd ${id} not found`);
     }
     return product;
   }
