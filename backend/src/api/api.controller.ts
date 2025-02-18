@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import { ProductsService } from 'src/modules/products/products.service';
 import { ProductSizesService } from 'src/modules/product_sizes/product_sizes.service';
 
@@ -26,10 +26,12 @@ export class ApiController {
     return { products: productsWithSizes };
   }
 
-  // API lấy chi tiết sản phẩm theo ID
   @Get('/:id')
   async getProductById(@Param('id') id: number) {
-    const product = await this.productsService.findOne(id); 
+    const product = await this.productsService.findOne(id);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
     return { product };
   }
 }

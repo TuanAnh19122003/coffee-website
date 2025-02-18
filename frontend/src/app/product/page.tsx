@@ -6,12 +6,11 @@ const ProductsPage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Gọi API để lấy danh sách sản phẩm và các size sản phẩm
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/products");
-        setProducts(response.data.products); // Giả sử backend trả về danh sách sản phẩm với product_sizes
+        setProducts(response.data.products);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -52,8 +51,8 @@ const ProductsPage = () => {
                           <li key={size.id} className="flex justify-between items-center">
                             <span className="font-medium">{size.size || 'No size'}</span>
                             <span className="text-gray-500">
-                              Price: {size.price ? `$${size.price}` : 'N/A'} | Discounted Price:{" "}
-                              {size.priceProduct ? `$${size.priceProduct}` : 'N/A'}
+                              Price: {size.price ? `${size.price}` : 'N/A'} | Discounted Price:{" "}
+                              {size.priceProduct ? `${size.priceProduct}` : 'N/A'}
                             </span>
                           </li>
                         ))}
