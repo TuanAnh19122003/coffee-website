@@ -36,7 +36,23 @@ export class ProductSizesService {
   }
   async getAll() {
     return await this.productSizesRepository.find();
-  }  
+  }
+  async getAllProductSize(){
+    const product_sizes = await this.productSizesRepository.find({
+      relations: ['product'], 
+    });
+    return product_sizes.map((product_size) => {
+      const discount = product_size.product?.discount || 0; 
+      const priceProduct = Number(product_size.price) * (1 - discount / 100); 
+      return {
+        ...product_size,
+        priceProduct: priceProduct.toFixed(2),
+        price: product_size.price ? Format.formatPrice(Number(product_size.price)) : 'N/A',
+        size: product_size.size,
+        productId: product_size.product?.id,
+      };
+    });
+  }
   async create(createProductSizeDto: CreateProductSizeDto): Promise<ProductSize> {
     const product_size = this.productSizesRepository.create(createProductSizeDto);
     if(createProductSizeDto.productId){

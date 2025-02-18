@@ -10,6 +10,7 @@ import { FeedbacksModule } from './modules/feedbacks/feedbacks.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { OrderDetailsModule } from './modules/order_details/order_details.module';
+import { ApiController } from './api/api.controller';
 
 
 @Module({
@@ -25,7 +26,7 @@ import { OrderDetailsModule } from './modules/order_details/order_details.module
     OrderDetailsModule,
     
   ],
-  controllers: [AppController],
+  controllers: [AppController, ApiController],
   providers: [AppService],
 })
 export class AppModule {}

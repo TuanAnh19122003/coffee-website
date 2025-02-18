@@ -38,6 +38,10 @@ export class ProductsService {
   async getAll() {
     return await this.productsRepository.find();
   }  
+  async getAllProduct() {
+    const products = await this.productsRepository.find({ relations: ['category'] });
+    return products;
+  }
   async getAllCategory() {
     return await this.categoriesService.getAll();
   }
