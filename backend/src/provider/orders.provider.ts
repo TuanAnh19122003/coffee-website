@@ -7,4 +7,4 @@ export const ordersProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Order),
     inject: ['DATA_SOURCE'],
   },
-]
+];

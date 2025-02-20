@@ -6,12 +6,9 @@ import { paymentsProvider } from 'src/provider/payments.provider';
 import { OrdersModule } from '../orders/orders.module';
 
 @Module({
-  imports:[DatabaseModule, OrdersModule],
+  imports: [DatabaseModule, OrdersModule],
   controllers: [PaymentsController],
-  providers: [
-    ...paymentsProvider,
-    PaymentsService
-  ],
+  providers: [...paymentsProvider, PaymentsService],
   exports: [PaymentsService],
 })
 export class PaymentsModule {}

@@ -7,4 +7,4 @@ export const feedbacksProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Feedback),
     inject: ['DATA_SOURCE'],
   },
-]
+];

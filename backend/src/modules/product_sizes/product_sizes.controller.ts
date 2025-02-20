@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Render,
+  Redirect,
+  Query,
+} from '@nestjs/common';
 import { ProductSizesService } from './product_sizes.service';
 import { CreateProductSizeDto } from './dto/create-product_size.dto';
 import { UpdateProductSizeDto } from './dto/update-product_size.dto';
@@ -14,7 +25,8 @@ export class ProductSizesController {
   async getAllProductSize(@Query('page') page: string = '1') {
     const currentPage = parseInt(page, 10) || 1;
     const limit = 5;
-    const { product_sizes, totalItems } = await this.productSizesService.findAll(currentPage, limit);
+    const { product_sizes, totalItems } =
+      await this.productSizesService.findAll(currentPage, limit);
 
     return {
       product_sizes,
@@ -26,11 +38,10 @@ export class ProductSizesController {
 
   @Get('/create')
   @Render('product-sizes/create')
-  async showCreateForm(){
+  async showCreateForm() {
     const products = await this.productSizesService.getAllProduct();
     return { products };
   }
-
 
   @Post('/create')
   @Redirect('/product-sizes')
@@ -40,15 +51,18 @@ export class ProductSizesController {
 
   @Get('/:id/edit')
   @Render('product-sizes/edit')
-  async showEditForm(@Param('id') id: number){
+  async showEditForm(@Param('id') id: number) {
     const products = await this.productSizesService.getAllProduct();
-    const product_size = await this.productSizesService.findOne(id)
+    const product_size = await this.productSizesService.findOne(id);
     return { products, product_size };
   }
 
   @Post('/:id/edit')
   @Redirect('/product-sizes')
-  async update(@Param('id') id: number, @Body() updateProductSizeDto: UpdateProductSizeDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updateProductSizeDto: UpdateProductSizeDto,
+  ) {
     return this.productSizesService.update(id, updateProductSizeDto);
   }
 
@@ -60,16 +74,18 @@ export class ProductSizesController {
 
   @Get('/:id/detail')
   @Render('product-sizes/detail')
-  async detail(@Param('id') id:number) {
+  async detail(@Param('id') id: number) {
     const products = await this.productSizesService.getAllProduct();
     const product_size = await this.productSizesService.findOne(id);
-    if(product_size){
+    if (product_size) {
       return {
         products,
         product_size: {
           ...product_size,
-          price: product_size.price ? Format.formatPrice(Number(product_size.price)) : 'N/A',
-        }
+          price: product_size.price
+            ? Format.formatPrice(Number(product_size.price))
+            : 'N/A',
+        },
       };
     }
     return { products, product_size };

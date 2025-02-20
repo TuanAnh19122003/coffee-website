@@ -8,6 +8,6 @@ export class AppController {
   @Get()
   @Render('index')
   getHello(): any {
-    return {message: this.appService.getHello()};
+    return { message: this.appService.getHello() };
   }
 }

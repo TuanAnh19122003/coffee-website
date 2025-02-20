@@ -7,4 +7,4 @@ export const categoriesProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Category),
     inject: ['DATA_SOURCE'],
   },
-]
+];

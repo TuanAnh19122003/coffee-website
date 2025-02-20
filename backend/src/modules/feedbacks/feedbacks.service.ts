@@ -4,26 +4,27 @@ import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { Feedback } from 'src/database/entities/feedback.entity';
 
-
 @Injectable()
 export class FeedbacksService {
   constructor(
     @Inject('FEEDBACK_REPOSITORY')
-    private feedbacksRepository : Repository<Feedback>
-  ){}
+    private feedbacksRepository: Repository<Feedback>,
+  ) {}
 
   async findAll(page: number, limit: number) {
-    const [feedbacks, totalItems] = await this.feedbacksRepository.findAndCount({
-      skip: (page - 1) * limit,  
-      take: limit,  
-    });
+    const [feedbacks, totalItems] = await this.feedbacksRepository.findAndCount(
+      {
+        skip: (page - 1) * limit,
+        take: limit,
+      },
+    );
     return {
       feedbacks,
       totalItems,
       currentPage: page,
       itemsPerPage: limit,
       totalPages: Math.ceil(totalItems / limit),
-    }
+    };
   }
 
   async create(createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {
@@ -32,23 +33,25 @@ export class FeedbacksService {
   }
 
   async findOne(id: number): Promise<Feedback> {
-
-    const feedback = await this.feedbacksRepository.findOne({where: {id}});
-    if(!feedback){
+    const feedback = await this.feedbacksRepository.findOne({ where: { id } });
+    if (!feedback) {
       throw new NotFoundException(`Feedback with ID ${id} not found`);
     }
     return feedback;
   }
-  async update(id: number, updateFeedbackDto: UpdateFeedbackDto): Promise<Feedback | null>{
+  async update(
+    id: number,
+    updateFeedbackDto: UpdateFeedbackDto,
+  ): Promise<Feedback | null> {
     const feedback = await this.findOne(id);
-    if(!feedback){
+    if (!feedback) {
       throw new NotFoundException(`Feedback with ID ${id} not found`);
     }
     await this.feedbacksRepository.update(id, updateFeedbackDto);
-    return { ...feedback, ...updateFeedbackDto}
+    return { ...feedback, ...updateFeedbackDto };
   }
 
   async remove(id: number): Promise<void> {
-    await this.feedbacksRepository.delete({id})
+    await this.feedbacksRepository.delete({ id });
   }
 }

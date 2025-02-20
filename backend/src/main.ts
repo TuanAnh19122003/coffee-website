@@ -8,9 +8,7 @@ import * as session from 'express-session';
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
@@ -27,14 +25,13 @@ async function bootstrap() {
       },
     }),
   );
-  
 
   app.enableCors({
-    origin: 'http://localhost:3000', 
+    origin: 'http://localhost:3000',
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
-  })
+  });
 
   await app.listen(process.env.PORT ?? 3001);
 }
-bootstrap();
+bootstrap().catch(() => {});

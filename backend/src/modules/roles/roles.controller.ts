@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Render,
+  Redirect,
+  Query,
+} from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -12,7 +23,10 @@ export class RolesController {
   async getAllRole(@Query('page') page: string = '1') {
     const currentPage = parseInt(page, 10) || 1;
     const limit = 5;
-    const { roles, totalItems } = await this.rolesService.findAll(currentPage, limit);
+    const { roles, totalItems } = await this.rolesService.findAll(
+      currentPage,
+      limit,
+    );
 
     return {
       roles,
@@ -25,7 +39,7 @@ export class RolesController {
   @Get('/create')
   @Render('roles/create')
   async showCreateForm() {
-    return { };
+    return {};
   }
 
   @Post('/create')
@@ -37,13 +51,13 @@ export class RolesController {
   @Get('/:id/edit')
   @Render('roles/edit')
   async showEditForm(@Param('id') id: number) {
-    const role = await this.rolesService.findOne(id)
+    const role = await this.rolesService.findOne(id);
     return { role };
   }
 
   @Post('/:id/edit')
   @Redirect('/roles')
-  edit(@Param('id') id:number, @Body() UpdateRoleDto: UpdateRoleDto) {
+  edit(@Param('id') id: number, @Body() UpdateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(id, UpdateRoleDto);
   }
 
@@ -56,7 +70,7 @@ export class RolesController {
   @Get('/:id/detail')
   @Render('roles/detail')
   async detail(@Param('id') id: number) {
-    const role = await this.rolesService.findOne(id)
+    const role = await this.rolesService.findOne(id);
     return { role };
   }
 }

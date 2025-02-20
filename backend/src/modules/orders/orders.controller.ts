@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Query, Redirect } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Render,
+  Query,
+  Redirect,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -14,7 +25,10 @@ export class OrdersController {
   async getAllOrder(@Query('page') page: string = '1') {
     const currentPage = parseInt(page, 10) || 1;
     const limit = 5;
-    const { orders, totalItems } = await this.ordersService.findAll(currentPage, limit);
+    const { orders, totalItems } = await this.ordersService.findAll(
+      currentPage,
+      limit,
+    );
 
     return {
       orders,
@@ -27,9 +41,8 @@ export class OrdersController {
   @Render('orders/create')
   async showCreateForm() {
     const users = await this.ordersService.getAllUser();
-    return { users }
+    return { users };
   }
-
 
   @Post('/create')
   @Redirect('/orders')
@@ -39,38 +52,43 @@ export class OrdersController {
 
   @Get('/:id/edit')
   @Render('orders/edit')
-  async showEditForm(@Param('id') id: number){
+  async showEditForm(@Param('id') id: number) {
     const users = await this.ordersService.getAllUser();
     const order = await this.ordersService.findOne(id);
-    
+
     return { users, order, OrderStatus };
   }
 
   @Post('/:id/edit')
   @Redirect('/orders')
-  async update(@Param('id') id: number, @Body() updateOrderDto: UpdateOrderDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
     return this.ordersService.update(id, updateOrderDto);
   }
-  
+
   @Get('/:id/delete')
   @Redirect('/orders')
   async remove(@Param('id') id: number) {
     return this.ordersService.remove(id);
   }
-  
+
   @Get('/:id/detail')
   @Render('orders/detail')
-  async detail(@Param('id') id:number) {
+  async detail(@Param('id') id: number) {
     const user = await this.ordersService.getAllUser();
     const order = await this.ordersService.findOne(id);
-    if(order){
+    if (order) {
       return {
         user,
         order: {
           ...order,
           total: order.total ? Format.formatPrice(Number(order.total)) : 'N/A',
-          order_date: order.order_date ? Format.formatDateTime(order.order_date) : null,
-        }
+          order_date: order.order_date
+            ? Format.formatDateTime(order.order_date)
+            : null,
+        },
       };
     }
     return { user, order };

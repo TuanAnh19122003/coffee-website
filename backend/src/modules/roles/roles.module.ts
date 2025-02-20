@@ -5,11 +5,9 @@ import { DatabaseModule } from 'src/database/migrations/database.module';
 import { rolesProvider } from 'src/provider/roles.provider';
 
 @Module({
-  imports:[DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [RolesController],
-  providers: [
-    ...rolesProvider,
-    RolesService],
+  providers: [...rolesProvider, RolesService],
   exports: [RolesService],
 })
 export class RolesModule {}

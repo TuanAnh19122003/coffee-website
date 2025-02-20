@@ -7,12 +7,9 @@ import { OrdersModule } from '../orders/orders.module';
 import { ProductsModule } from '../products/products.module';
 
 @Module({
-  imports:[DatabaseModule, OrdersModule, ProductsModule],
+  imports: [DatabaseModule, OrdersModule, ProductsModule],
   controllers: [OrderDetailsController],
-  providers: [
-    ...order_DetailsProvider,
-    OrderDetailsService
-  ],
-  exports: [OrderDetailsService]
+  providers: [...order_DetailsProvider, OrderDetailsService],
+  exports: [OrderDetailsService],
 })
 export class OrderDetailsModule {}

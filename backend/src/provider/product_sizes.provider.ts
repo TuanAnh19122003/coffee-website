@@ -4,7 +4,8 @@ import { DataSource } from 'typeorm';
 export const product_sizeProvider = [
   {
     provide: 'PRODUCT_SIZE_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProductSize),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ProductSize),
     inject: ['DATA_SOURCE'],
   },
-]
+];

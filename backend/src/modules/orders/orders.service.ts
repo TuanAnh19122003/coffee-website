@@ -12,23 +12,25 @@ export class OrdersService {
     @Inject('ORDER_REPOSITORY')
     private readonly ordersRepository: Repository<Order>,
     private readonly usersService: UsersService,
-  ){}
+  ) {}
   async findAll(page: number, limit: number) {
     const [orders, totalItems] = await this.ordersRepository.findAndCount({
-      skip: (page - 1) * limit,  
+      skip: (page - 1) * limit,
       take: limit,
-      relations: ['user']  
+      relations: ['user'],
     });
     return {
-      orders: orders.map(order => ({
+      orders: orders.map((order) => ({
         ...order,
-        order_date: order.order_date ? Format.formatDateTime(order.order_date) : null,
+        order_date: order.order_date
+          ? Format.formatDateTime(order.order_date)
+          : null,
         total: order.total ? Format.formatPrice(Number(order.total)) : 'N/A',
       })),
       totalItems,
       currentPage: page,
       itemsPerPage: limit,
-      totalPages: Math.ceil(totalItems / limit)
+      totalPages: Math.ceil(totalItems / limit),
     };
   }
   async getAll() {
@@ -41,28 +43,30 @@ export class OrdersService {
     const order = this.ordersRepository.create(createOrderDto);
     if (createOrderDto.userId) {
       order.user = await this.usersService.findOne(createOrderDto.userId);
-    } else{
-      throw new Error("userId is required");
+    } else {
+      throw new Error('userId is required');
     }
-  
+
     return await this.ordersRepository.save(order);
   }
 
-
   async findOne(id: number): Promise<Order> {
     const order = await this.ordersRepository.findOne({
-      where: {id},
-      relations:['user']
+      where: { id },
+      relations: ['user'],
     });
-    if(!order){
+    if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
     return order;
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | null> {
+  async update(
+    id: number,
+    updateOrderDto: UpdateOrderDto,
+  ): Promise<Order | null> {
     const order = await this.findOne(id);
-    if(!order){
+    if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
     if (updateOrderDto.userId) {

@@ -7,19 +7,24 @@ export const multerConfig = {
     },
     filename: (req, file, cb) => {
       const now = new Date();
-      const timestamp = now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+      const timestamp = now
+        .toISOString()
+        .replace(/T/, '_')
+        .replace(/\..+/, '')
+        .replace(/:/g, '-');
 
       let baseName = file.originalname;
-      let name = baseName.replace(/[^0-9a-zA-Z-\s.]/g, '') 
-                         .replace(/\s+/g, '-')         
-                         .replace(/-+/g, '-')           
-                         .replace(/^-+|-+$/g, '');      
+      let name = baseName
+        .replace(/[^0-9a-zA-Z-\s.]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
 
       const newFileName = `${timestamp}-${name}`;
       cb(null, newFileName);
-    }
+    },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 },  
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, callback) => {
     if (!file.mimetype.match(/\/(jpeg|jpg|png)$/)) {
       return callback(new Error('Only image files are allowed!'), false);

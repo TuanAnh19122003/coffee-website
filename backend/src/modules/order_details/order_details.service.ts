@@ -14,21 +14,22 @@ export class OrderDetailsService {
     private readonly orderDetailsRepository: Repository<OrderDetail>,
     private readonly productsService: ProductsService,
     private readonly ordersService: OrdersService,
-  ){}
+  ) {}
   async findAll(page: number, limit: number) {
-    const [orderDetails, totalItems] = await this.orderDetailsRepository.findAndCount({
-      skip: (page - 1) * limit,  
-      take: limit,
-      relations: ['order', 'product', 'order.user'],
-    });
+    const [orderDetails, totalItems] =
+      await this.orderDetailsRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+        relations: ['order', 'product', 'order.user'],
+      });
     return {
-      orderDetails: orderDetails.map(orderDetail => {
+      orderDetails: orderDetails.map((orderDetail) => {
         const price = orderDetail.price ? Number(orderDetail.price) : 0;
         const quantity = orderDetail.num ?? 1;
         return {
           ...orderDetail,
           price: Format.formatPrice(price),
-          totalPrice: Format.formatPrice(price * quantity)
+          totalPrice: Format.formatPrice(price * quantity),
         };
       }),
       totalItems,
@@ -48,49 +49,65 @@ export class OrderDetailsService {
   }
   async findOne(id: number): Promise<OrderDetail> {
     const orderDetail = await this.orderDetailsRepository.findOne({
-      where: {id},
+      where: { id },
       relations: ['order', 'product', 'order.user'],
     });
-    if(!orderDetail){
+    if (!orderDetail) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
     return orderDetail;
   }
 
-  async create(createOrderDetailDto: CreateOrderDetailDto): Promise<OrderDetail> {
-    const orderDetail = this.orderDetailsRepository.create(createOrderDetailDto);
+  async create(
+    createOrderDetailDto: CreateOrderDetailDto,
+  ): Promise<OrderDetail> {
+    const orderDetail =
+      this.orderDetailsRepository.create(createOrderDetailDto);
     if (createOrderDetailDto.productId) {
-      orderDetail.product = await this.productsService.findOne(createOrderDetailDto.productId);
-    } else{
-      throw new Error("productId is required");
+      orderDetail.product = await this.productsService.findOne(
+        createOrderDetailDto.productId,
+      );
+    } else {
+      throw new Error('productId is required');
     }
 
     if (createOrderDetailDto.orderId) {
-      const order = await this.ordersService.findOne(createOrderDetailDto.orderId);
+      const order = await this.ordersService.findOne(
+        createOrderDetailDto.orderId,
+      );
       if (!order) {
-        throw new NotFoundException(`Order with ID ${createOrderDetailDto.orderId} not found`);
+        throw new NotFoundException(
+          `Order with ID ${createOrderDetailDto.orderId} not found`,
+        );
       }
       orderDetail.order = order;
     } else {
-      throw new Error("orderId is required");
+      throw new Error('orderId is required');
     }
-  
+
     return await this.orderDetailsRepository.save(orderDetail);
   }
 
-  async update(id: number,updateOrderDetailDto: UpdateOrderDetailDto): Promise<OrderDetail | null> {
+  async update(
+    id: number,
+    updateOrderDetailDto: UpdateOrderDetailDto,
+  ): Promise<OrderDetail | null> {
     const orderDetail = await this.findOne(id);
-    if(!orderDetail){
+    if (!orderDetail) {
       throw new NotFoundException(`Order Detail with ID ${id} not found`);
     }
     if (updateOrderDetailDto.productId) {
-      orderDetail.product = await this.productsService.findOne(updateOrderDetailDto.productId);
+      orderDetail.product = await this.productsService.findOne(
+        updateOrderDetailDto.productId,
+      );
     }
 
     if (updateOrderDetailDto.orderId) {
-      orderDetail.order = await this.ordersService.findOne(updateOrderDetailDto.orderId);
+      orderDetail.order = await this.ordersService.findOne(
+        updateOrderDetailDto.orderId,
+      );
     }
-    
+
     Object.assign(orderDetail, updateOrderDetailDto);
     return await this.orderDetailsRepository.save(orderDetail);
   }

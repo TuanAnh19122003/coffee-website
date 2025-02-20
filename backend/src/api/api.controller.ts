@@ -6,20 +6,22 @@ import { ProductSizesService } from 'src/modules/product_sizes/product_sizes.ser
 export class ApiController {
   constructor(
     private readonly productsService: ProductsService,
-    private readonly productSizesService: ProductSizesService
+    private readonly productSizesService: ProductSizesService,
   ) {}
 
   // API lấy tất cả sản phẩm
   @Get('/products')
   async getAllProducts() {
-    const products = await this.productsService.getAllProduct(); 
-    const productSizes = await this.productSizesService.getAllProductSize(); 
+    const products = await this.productsService.getAllProduct();
+    const productSizes = await this.productSizesService.getAllProductSize();
 
-    const productsWithSizes = products.map(product => {
-      const sizes = productSizes.filter(size => size.productId === product.id); 
+    const productsWithSizes = products.map((product) => {
+      const sizes = productSizes.filter(
+        (size) => size.productId === product.id,
+      );
       return {
         ...product,
-        product_sizes: sizes, 
+        product_sizes: sizes,
       };
     });
 

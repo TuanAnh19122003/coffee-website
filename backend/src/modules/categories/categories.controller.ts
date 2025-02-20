@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Render,
+  Redirect,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -12,7 +24,10 @@ export class CategoriesController {
   async getAllCategory(@Query('page') page: string = '1') {
     const currentPage = parseInt(page, 10) || 1;
     const limit = 5;
-    const { categories, totalItems } = await this.categoriesService.findAll(currentPage, limit);
+    const { categories, totalItems } = await this.categoriesService.findAll(
+      currentPage,
+      limit,
+    );
 
     return {
       categories,
@@ -42,10 +57,12 @@ export class CategoriesController {
   }
   @Post('/:id/edit')
   @Redirect('/categories')
-  async update(@Param('id') id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
-
 
   @Get('/:id/delete')
   @Redirect('/categories')

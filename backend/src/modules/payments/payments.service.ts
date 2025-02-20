@@ -16,19 +16,21 @@ export class PaymentsService {
 
   async findAll(page: number, limit: number) {
     const [payments, totalItems] = await this.paymentsRepository.findAndCount({
-      skip: (page - 1) * limit,  
+      skip: (page - 1) * limit,
       take: limit,
-      relations: ['order']  
+      relations: ['order'],
     });
     return {
-      payments: payments.map(payment => ({
+      payments: payments.map((payment) => ({
         ...payment,
-        paidAmount: payment.paidAmount ? Format.formatPrice(Number(payment.paidAmount)) : 'N/A',
+        paidAmount: payment.paidAmount
+          ? Format.formatPrice(Number(payment.paidAmount))
+          : 'N/A',
       })),
       totalItems,
       currentPage: page,
       itemsPerPage: limit,
-      totalPages: Math.ceil(totalItems / limit)
+      totalPages: Math.ceil(totalItems / limit),
     };
   }
   async getAll() {
@@ -39,12 +41,14 @@ export class PaymentsService {
   }
   async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
     if (!createPaymentDto.orderId) {
-      throw new Error("Order ID is required for payment");
+      throw new Error('Order ID is required for payment');
     }
 
     const order = await this.ordersService.findOne(createPaymentDto.orderId);
     if (!order) {
-      throw new NotFoundException(`Order with ID ${createPaymentDto.orderId} not found`);
+      throw new NotFoundException(
+        `Order with ID ${createPaymentDto.orderId} not found`,
+      );
     }
 
     const payment = this.paymentsRepository.create({
@@ -52,22 +56,25 @@ export class PaymentsService {
       order,
       paidAmount: order.total,
     });
-    console.log(payment)
+    console.log(payment);
     return await this.paymentsRepository.save(payment);
   }
 
   async findOne(id: number): Promise<Payment> {
     const payment = await this.paymentsRepository.findOne({
-      where: {id},
-      relations:['order']
+      where: { id },
+      relations: ['order'],
     });
-    if(!payment){
+    if (!payment) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
     }
     return payment;
   }
 
-  async update(id: number, updatePaymentDto: UpdatePaymentDto): Promise<Payment | null> {
+  async update(
+    id: number,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<Payment | null> {
     const payment = await this.findOne(id);
     if (!payment) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
@@ -75,9 +82,13 @@ export class PaymentsService {
 
     // Nếu có orderId, tìm lại order mới
     if (updatePaymentDto.orderId) {
-      payment.order = await this.ordersService.findOne(updatePaymentDto.orderId);
+      payment.order = await this.ordersService.findOne(
+        updatePaymentDto.orderId,
+      );
       if (!payment.order) {
-        throw new NotFoundException(`Order with ID ${updatePaymentDto.orderId} not found`);
+        throw new NotFoundException(
+          `Order with ID ${updatePaymentDto.orderId} not found`,
+        );
       }
     }
 

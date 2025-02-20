@@ -8,13 +8,13 @@ import { Role } from 'src/database/entities/role.entity';
 export class RolesService {
   constructor(
     @Inject('ROLE_REPOSITORY')
-    private rolesRepository : Repository<Role>
+    private rolesRepository: Repository<Role>,
   ) {}
 
   async findAll(page: number, limit: number) {
     const [roles, totalItems] = await this.rolesRepository.findAndCount({
-      skip: (page - 1) * limit,  
-      take: limit,  
+      skip: (page - 1) * limit,
+      take: limit,
     });
     return {
       roles,
@@ -22,11 +22,11 @@ export class RolesService {
       currentPage: page,
       itemsPerPage: limit,
       totalPages: Math.ceil(totalItems / limit),
-    }
+    };
   }
   async getAll() {
     return await this.rolesRepository.find();
-  } 
+  }
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const role = this.rolesRepository.create(createRoleDto);
@@ -34,20 +34,20 @@ export class RolesService {
   }
 
   async findOne(id: number): Promise<Role> {
-    const role = await this.rolesRepository.findOne({where: {id}});
-    if(!role){
+    const role = await this.rolesRepository.findOne({ where: { id } });
+    if (!role) {
       throw new NotFoundException(`Role with ID ${id} not found`);
     }
     return role;
   }
 
-  async update(id: number , updateRoleDto: UpdateRoleDto): Promise<Role | null>{
+  async update(id: number, updateRoleDto: UpdateRoleDto): Promise<Role | null> {
     const role = await this.findOne(id);
-    if(!role){
+    if (!role) {
       throw new NotFoundException(`Role with ID ${id} not found`);
     }
     await this.rolesRepository.update(id, updateRoleDto);
-    return { ...role, ...updateRoleDto}
+    return { ...role, ...updateRoleDto };
   }
 
   async remove(id: number): Promise<void> {

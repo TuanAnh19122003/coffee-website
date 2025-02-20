@@ -8,82 +8,105 @@ import { Format } from 'src/utils/format';
 import * as fs from 'fs';
 import * as path from 'path';
 
-
 @Injectable()
 export class ProductsService {
   constructor(
     @Inject('PRODUCT_REPOSITORY')
     private readonly productsRepository: Repository<Product>,
     private readonly categoriesService: CategoriesService,
-  ){}
+  ) {}
 
   async findAll(page: number, limit: number) {
     const [products, totalItems] = await this.productsRepository.findAndCount({
-      skip: (page - 1) * limit,  
+      skip: (page - 1) * limit,
       take: limit,
-      relations: ['category']  
+      relations: ['category'],
     });
     return {
-      products: products.map(product => ({
+      products: products.map((product) => ({
         ...product,
-        createdAt: product.createdAt ? Format.formatDateTime(product.createdAt) : null,
-        updatedAt: product.updatedAt ? Format.formatDateTime(product.updatedAt) : null
+        createdAt: product.createdAt
+          ? Format.formatDateTime(product.createdAt)
+          : null,
+        updatedAt: product.updatedAt
+          ? Format.formatDateTime(product.updatedAt)
+          : null,
       })),
       totalItems,
       currentPage: page,
       itemsPerPage: limit,
-      totalPages: Math.ceil(totalItems / limit)
+      totalPages: Math.ceil(totalItems / limit),
     };
   }
   async getAll() {
     return await this.productsRepository.find();
-  }  
+  }
   async getAllProduct() {
-    const products = await this.productsRepository.find({ relations: ['category'] });
+    const products = await this.productsRepository.find({
+      relations: ['category'],
+    });
     return products;
   }
   async getAllCategory() {
     return await this.categoriesService.getAll();
   }
-  
 
-  async create(createProductDto: CreateProductDto, file?: Express.Multer.File): Promise<Product> {
+  async create(
+    createProductDto: CreateProductDto,
+    file?: Express.Multer.File,
+  ): Promise<Product> {
     const product = this.productsRepository.create(createProductDto);
-    if(file){
+    if (file) {
       product.image = `/uploads/${file.filename}`;
     }
-    if(createProductDto.categoryId){
-      product.category = await this.categoriesService.findOne(createProductDto.categoryId)
+    if (createProductDto.categoryId) {
+      product.category = await this.categoriesService.findOne(
+        createProductDto.categoryId,
+      );
     }
     return await this.productsRepository.save(product);
   }
 
   async findOne(id: number): Promise<Product> {
     const product = await this.productsRepository.findOne({
-      where: {id},
+      where: { id },
       relations: ['product_sizes', 'category'],
     });
-    if(!product){
+    if (!product) {
       throw new NotFoundException(`Product witd ${id} not found`);
     }
     return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto, file?:Express.Multer.File): Promise<Product> {
-    const product = await this.findOne(id)
-    if(file){
-      if(product.image){
-        const oldImagePath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(product.image));
-        //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)    
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    file?: Express.Multer.File,
+  ): Promise<Product> {
+    const product = await this.findOne(id);
+    if (file) {
+      if (product.image) {
+        const oldImagePath = path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          'public',
+          'uploads',
+          path.basename(product.image),
+        );
+        //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)
         if (fs.existsSync(oldImagePath)) {
-            fs.unlinkSync(oldImagePath);
-            console.log("ảnh cũ đã được xóa")
+          fs.unlinkSync(oldImagePath);
+          console.log('ảnh cũ đã được xóa');
         }
       }
       product.image = `/uploads/${file.filename}`;
     }
     if (updateProductDto.categoryId) {
-      product.category = await this.categoriesService.findOne(updateProductDto.categoryId);
+      product.category = await this.categoriesService.findOne(
+        updateProductDto.categoryId,
+      );
     }
     Object.assign(product, updateProductDto);
     return await this.productsRepository.save(product);
@@ -91,12 +114,20 @@ export class ProductsService {
 
   async remove(id: number): Promise<void> {
     const product = await this.findOne(id);
-    if(product.image){
-      const oldImagePath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(product.image));
-      //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)    
+    if (product.image) {
+      const oldImagePath = path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'public',
+        'uploads',
+        path.basename(product.image),
+      );
+      //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)
       if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-          console.log("ảnh và thông tin của sản phẩm đã được xóa")
+        fs.unlinkSync(oldImagePath);
+        console.log('ảnh và thông tin của sản phẩm đã được xóa');
       }
     }
     await this.productsRepository.delete(product);

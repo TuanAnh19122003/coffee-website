@@ -12,19 +12,17 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { OrderDetailsModule } from './modules/order_details/order_details.module';
 import { ApiController } from './api/api.controller';
 
-
 @Module({
   imports: [
-    RolesModule, 
-    UsersModule, 
-    CategoriesModule, 
-    ProductsModule, 
-    ProductSizesModule, 
-    FeedbacksModule, 
-    OrdersModule, 
-    PaymentsModule, 
+    RolesModule,
+    UsersModule,
+    CategoriesModule,
+    ProductsModule,
+    ProductSizesModule,
+    FeedbacksModule,
+    OrdersModule,
+    PaymentsModule,
     OrderDetailsModule,
-    
   ],
   controllers: [AppController, ApiController],
   providers: [AppService],

@@ -5,12 +5,9 @@ import { DatabaseModule } from 'src/database/migrations/database.module';
 import { categoriesProvider } from 'src/provider/categories.provider';
 
 @Module({
-  imports:[DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [CategoriesController],
-  providers: [
-    ...categoriesProvider,
-    CategoriesService
-  ],
+  providers: [...categoriesProvider, CategoriesService],
   exports: [CategoriesService],
 })
 export class CategoriesModule {}

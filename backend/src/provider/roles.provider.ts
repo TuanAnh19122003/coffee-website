@@ -7,4 +7,4 @@ export const rolesProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Role),
     inject: ['DATA_SOURCE'],
   },
-]
+];

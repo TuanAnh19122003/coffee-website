@@ -7,4 +7,4 @@ export const usersProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(User),
     inject: ['DATA_SOURCE'],
   },
-]
+];

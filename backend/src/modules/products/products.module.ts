@@ -9,15 +9,12 @@ import { multerConfig } from 'src/config/multer-config';
 
 @Module({
   imports: [
-    DatabaseModule, 
+    DatabaseModule,
     CategoriesModule,
-    MulterModule.register(multerConfig)
+    MulterModule.register(multerConfig),
   ],
   controllers: [ProductsController],
-  providers: [
-    ...productsProvider,
-    ProductsService
-  ],
+  providers: [...productsProvider, ProductsService],
   exports: [ProductsService],
 })
 export class ProductsModule {}

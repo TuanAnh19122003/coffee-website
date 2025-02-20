@@ -7,4 +7,4 @@ export const paymentsProvider = [
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Payment),
     inject: ['DATA_SOURCE'],
   },
-]
+];
