@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from 'src/database/entities/category.entity';
-import { cursorTo } from 'readline';
+
 
 @Injectable()
 export class CategoriesService {
