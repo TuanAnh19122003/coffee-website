@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import axios from "axios";
 
 const ProductsPage = () => {
@@ -9,7 +10,7 @@ const ProductsPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`);
         setProducts(response.data.products);
         setLoading(false);
       } catch (error) {
@@ -33,11 +34,13 @@ const ProductsPage = () => {
           {products.map((product: any) => (
             <li key={product.id} className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex items-center space-x-6">
-                <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                  alt={product.name}
-                  className="w-32 h-32 object-cover rounded-lg"
-                />
+              <Image
+                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                alt={product.name}
+                width={128} // Điều chỉnh kích thước theo nhu cầu
+                height={128}
+                className="object-cover rounded-lg"
+              />
                 <div className="flex-1">
                   <h2 className="text-2xl font-semibold">{product.name}</h2>
                   <p className="text-gray-600 text-sm">Category: {product.category?.name || 'No category'}</p>
