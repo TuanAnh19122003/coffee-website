@@ -12,6 +12,6 @@ export class ProductSize {
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     price?: number;
 
-    @ManyToOne(() => Product, product => product.sizes)
+    @ManyToOne(() => Product, product => product.product_sizes)
     product?: Product;
 }

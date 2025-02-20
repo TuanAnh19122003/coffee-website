@@ -29,5 +29,5 @@ export class Product {
     category?: Category;
 
     @OneToMany(() => ProductSize, productSize => productSize.product)
-    sizes?: ProductSize[];
+    product_sizes?: ProductSize[];
 }
