@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { Playfair_Display } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+});
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -27,10 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${playfair.variable} ${geistSans.variable} ${geistMono.variable} antialiased  `}
       >
         <div className="flex flex-col min-h-screen">
-          <Header />
+          <Navbar />
             <main className="flex-grow">{children}</main>
           <Footer />
         </div>
