@@ -9,6 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../../database/entities/user.entity';
 import { RolesService } from '../roles/roles.service';
+import { BcryptHelper } from 'src/utils/bcrypt.helper';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -18,7 +19,7 @@ export class UsersService {
     @Inject('USER_REPOSITORY')
     private readonly usersRepository: Repository<User>,
     private readonly rolesService: RolesService,
-  ) {}
+  ) { }
 
   async findAll(page: number, limit: number): Promise<any> {
     const [users, totalItems] = await this.usersRepository.findAndCount({
@@ -51,13 +52,21 @@ export class UsersService {
     if (file) {
       user.image = `/uploads/${file.filename}`;
     }
+    if (createUserDto.password) {
+      console.log('Mật khẩu trước khi mã hóa: ' + createUserDto.password);
+      user.password = await BcryptHelper.hashPassword(createUserDto.password);
+      console.log('Mật khẩu sau khi mã hóa: ' + user.password);
+    }
     if (createUserDto.roleId) {
       user.role = await this.rolesService.findOne(createUserDto.roleId);
     }
     return await this.usersRepository.save(user);
   }
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository.findOne({
+      where: { email },
+      relations: ['role'],
+    });
   }
 
   async getAll() {
@@ -82,15 +91,7 @@ export class UsersService {
     const user = await this.findOne(id);
     if (file) {
       if (user.image) {
-        const oldImagePath = path.join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          'public',
-          'uploads',
-          path.basename(user.image),
-        );
+        const oldImagePath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(user.image));
         //console.log("ĐƯờng dẫn ảnh cũ: "+ oldImagePath)
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
@@ -98,6 +99,18 @@ export class UsersService {
         }
       }
       user.image = `/uploads/${file.filename}`;
+    }
+    if (updateUserDto.password && updateUserDto.password.trim() !== '') {
+      const isHashed = updateUserDto.password.startsWith('$2b$');
+
+      if (!isHashed) {
+        // console.log('🔹 Mật khẩu trước khi mã hóa:', updateUserDto.password);
+        updateUserDto.password = await BcryptHelper.hashPassword(updateUserDto.password);
+        // console.log('🔹 Mật khẩu sau khi mã hóa:', updateUserDto.password);
+      }
+    } else {
+      // console.log('Không cập nhật mật khẩu, giữ nguyên mật khẩu cũ.');
+      delete updateUserDto.password;
     }
     if (updateUserDto.roleId) {
       user.role = await this.rolesService.findOne(updateUserDto.roleId);
