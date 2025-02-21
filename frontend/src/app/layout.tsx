@@ -30,15 +30,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Thêm các link vào đây */}
+        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+      </head>
       <body
-        className={`${playfair.variable} ${geistSans.variable} ${geistMono.variable} antialiased  `}
+        className={`${playfair.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex flex-col min-h-screen">
           <Navbar />
-            <main className="flex-grow">{children}</main>
+          <main className="flex-grow">{children}</main>
           <Footer />
         </div>
-        
       </body>
     </html>
   );

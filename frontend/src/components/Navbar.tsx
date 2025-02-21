@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import axios from "axios";
 
 export const Navbar = () => {
+    const router = useRouter();
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -14,7 +16,7 @@ export const Navbar = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
+                const response = await fetch(`http://localhost:5000/api/user`, {
                     credentials: "include",
                 });
                 if (response.ok) {
@@ -32,6 +34,7 @@ export const Navbar = () => {
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {}, { withCredentials: true });
             setUser(null);
+            router.push('/auth/login');
         } catch (error) {
             console.error("Logout failed", error);
         }
@@ -59,10 +62,20 @@ export const Navbar = () => {
                     </ul>
                 </div>
 
-                {/* User Info / Login */}
-                <div className="relative">
+                {/* Giỏ hàng và User Info */}
+                <div className="flex items-center space-x-4">
+                    <div className="relative">
+                        <button className="flex items-center space-x-2">
+                            <i className="fas fa-shopping-cart text-xl text-black"></i>
+                            <span className="absolute -top-1 -right-1 rounded-full bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center">
+                                3
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* User Info / Login */}
                     {user ? (
-                        <div className="flex items-center space-x-4">
+                        <div className="relative flex items-center space-x-4">
                             <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
                                 className="flex items-center space-x-2 focus:outline-none hover:bg-gray-100 p-2 rounded-md transition duration-200 ease-in-out"
@@ -71,14 +84,14 @@ export const Navbar = () => {
                                     src={user.image?.startsWith("http") ? user.image : `${process.env.NEXT_PUBLIC_API_URL}${user.image}`}
                                     width={30}
                                     height={30}
-                                    className="rounded-full object-cover"
+                                    className="rounded-full w-9 h-9"
                                     alt="User Avatar"
                                 />
                                 <span className="text-black font-medium">{user.lastName} {user.firstName}</span>
                             </button>
 
                             {dropdownOpen && (
-                                <div className="absolute top-full mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-10">
+                                <div className="absolute top-full mt-2 right-0 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-10">
                                     <div className="py-2">
                                         <Link href="/profile" className="block px-4 py-2 text-black hover:bg-gray-100 rounded-md transition duration-200 ease-in-out">
                                             <i className="fas fa-user fa-sm mr-2 text-gray-400"></i> Profile
@@ -104,8 +117,8 @@ export const Navbar = () => {
                         </Link>
                     )}
                 </div>
-
             </div>
         </nav>
+
     );
 };

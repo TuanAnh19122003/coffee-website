@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, UseGuards, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -7,7 +7,7 @@ export class AppController {
 
   @Get()
   @Render('index')
-  getHello(): any {
-    return { message: this.appService.getHello() };
+  getAdminDashboard(@Req() req: any) {
+    return { message: 'Welcome to the Admin Dashboard', user: req.session.user };
   }
 }

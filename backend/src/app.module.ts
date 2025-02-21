@@ -32,6 +32,6 @@ import { UserMiddleware } from './middlewares/user.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UserMiddleware).forRoutes('*'); // Áp dụng cho tất cả route
+    consumer.apply(UserMiddleware).forRoutes('*');
   }
 }
