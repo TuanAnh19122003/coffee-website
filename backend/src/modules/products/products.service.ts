@@ -14,7 +14,7 @@ export class ProductsService {
     @Inject('PRODUCT_REPOSITORY')
     private readonly productsRepository: Repository<Product>,
     private readonly categoriesService: CategoriesService,
-  ) {}
+  ) { }
 
   async findAll(page: number, limit: number) {
     const [products, totalItems] = await this.productsRepository.findAndCount({
@@ -47,6 +47,24 @@ export class ProductsService {
     });
     return products;
   }
+
+  async getRandomProducts(): Promise<Product[]> {
+    const products = await this.getAll(); // Giả sử getAll() trả về tất cả sản phẩm
+    const randomProducts: Product[] = [];
+
+    while (randomProducts.length < 4) { // Lấy 3 sản phẩm ngẫu nhiên
+      const randomIndex = Math.floor(Math.random() * products.length);
+      const randomProduct = products[randomIndex];
+
+      if (!randomProducts.includes(randomProduct)) {
+        randomProducts.push(randomProduct);
+      }
+    }
+
+    return randomProducts;
+  }
+
+
   async getAllCategory() {
     return await this.categoriesService.getAll();
   }

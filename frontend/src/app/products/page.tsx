@@ -15,31 +15,26 @@ const ProductsPage = () => {
 
     // Phân trang
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(8); // 8 sản phẩm mỗi trang
+    const pageSize = 8; // 8 sản phẩm mỗi trang, không cần để state
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        // Fetch products and categories in parallel to reduce waiting time
+        const fetchData = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`);
-                setProducts(response.data.products);
+                const [productsResponse, categoriesResponse] = await Promise.all([
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`),
+                ]);
+                setProducts(productsResponse.data.products);
+                setCategories(categoriesResponse.data.categories);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`);
-                setCategories(response.data.categories);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-
-        fetchProducts();
-        fetchCategories();
+        fetchData();
     }, []);
 
     // Lọc sản phẩm theo danh mục
@@ -51,9 +46,8 @@ const ProductsPage = () => {
     const paginatedProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     // Xử lý thay đổi trang
-    const handlePageChange = (page: number, pageSize: number) => {
+    const handlePageChange = (page: number) => {
         setCurrentPage(page);
-        setPageSize(pageSize);
     };
 
     const categoryItems = [
@@ -61,8 +55,8 @@ const ProductsPage = () => {
         ...categories.map((category) => ({
             label: category.name,
             key: category.id,
-            onClick: () => setSelectedCategory(category.id)
-        }))
+            onClick: () => setSelectedCategory(category.id),
+        })),
     ];
 
     return (
@@ -70,7 +64,11 @@ const ProductsPage = () => {
             {/* Sidebar Category Filter */}
             <Sider width={250} className="p-4 bg-white shadow-md rounded-lg">
                 <Title level={4} className="text-center">Categories</Title>
-                <Menu mode="inline" selectedKeys={selectedCategory ? [selectedCategory] : ["all"]} items={categoryItems} />
+                <Menu
+                    mode="inline"
+                    selectedKeys={selectedCategory ? [selectedCategory] : ["all"]}
+                    items={categoryItems}
+                />
             </Sider>
 
             {/* Product List */}
@@ -87,13 +85,18 @@ const ProductsPage = () => {
                                 <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
                                     <Card
                                         hoverable
-                                        style={{ height: 380, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                        style={{
+                                            height: 380,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "space-between",
+                                        }}
                                         cover={
                                             <Image
                                                 src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                                                 alt={product.name}
                                                 className="rounded-lg"
-                                                style={{ height: 200, objectFit: "cover" }}
+                                                style={{ height: 200, objectFit: "cover", objectPosition: "center" }}
                                             />
                                         }
                                     >
@@ -133,7 +136,6 @@ const ProductsPage = () => {
                                             View Details
                                         </Link>
                                     </Card>
-
                                 </Col>
                             ))}
                         </Row>
@@ -145,7 +147,7 @@ const ProductsPage = () => {
                                 pageSize={pageSize}
                                 total={filteredProducts.length}
                                 onChange={handlePageChange}
-                                showSizeChanger
+                                showSizeChanger={false} // No need for size changer since pageSize is constant
                             />
                         </div>
                     </>

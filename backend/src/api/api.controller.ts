@@ -12,6 +12,7 @@ import { BcryptHelper } from 'src/utils/bcrypt.helper';
 import { CategoriesService } from 'src/modules/categories/categories.service';
 import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
 import { multerConfig } from 'src/config/multer-config';
+import { Product } from 'src/database/entities/product.entity';
 
 @Controller('api')
 export class ApiController {
@@ -132,7 +133,7 @@ export class ApiController {
 
     return { user: (req as any).session.user };
   }
- 
+
   @Post('/me')
   @UseInterceptors(FileInterceptor('image', multerConfig))  // Sử dụng cấu hình multer đã tạo
   async updateProfile(
@@ -165,6 +166,15 @@ export class ApiController {
   async getAllCategories() {
     const categories = await this.categoriesService.getAll();
     return { categories };
+  }
+
+  @Get('/random')
+  async getRandomProducts(): Promise<Product[]> {
+    const products = await this.productsService.getRandomProducts();
+    if (products.length === 0) {
+      throw new NotFoundException('No products available');
+    }
+    return products;
   }
 
 }

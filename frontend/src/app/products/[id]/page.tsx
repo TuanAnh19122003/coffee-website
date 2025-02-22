@@ -53,7 +53,7 @@ const ProductDetailPage = () => {
                         src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                         alt={product.name}
                         className="rounded-lg"
-                        style={{ width: "100%", height: "500px", objectFit: "cover" }}
+                        style={{ width: "100%", height: "500px", objectFit: "contain", objectPosition: "center"}}
                     />
                 </Image.PreviewGroup>
             </div>
