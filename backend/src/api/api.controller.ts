@@ -7,6 +7,7 @@ import { AuthService } from 'src/modules/users/auth/auth.service';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { BcryptHelper } from 'src/utils/bcrypt.helper';
+import { CategoriesService } from 'src/modules/categories/categories.service';
 
 @Controller('api')
 export class ApiController {
@@ -16,26 +17,34 @@ export class ApiController {
     private readonly feedbacksService: FeedbacksService,
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly categoriesService: CategoriesService,
   ) { }
 
   // API lấy tất cả sản phẩm
   @Get('/products')
   async getAllProducts() {
-    const products = await this.productsService.getAllProduct();
-    const productSizes = await this.productSizesService.getAllProductSize();
-
-    const productsWithSizes = products.map((product) => {
-      const sizes = productSizes.filter(
-        (size) => size.productId === product.id,
-      );
-      return {
-        ...product,
-        product_sizes: sizes,
-      };
-    });
-
-    return { products: productsWithSizes };
+      const products = await this.productsService.getAllProduct();
+      const productSizes = await this.productSizesService.getAllProductSize();
+  
+      const productsWithSizes = products.map((product) => {
+          const sizes = productSizes.filter(
+              (size) => size.productId === product.id,
+          );
+  
+          // Lấy size S hoặc size đầu tiên nếu không có size S
+          const defaultSize = sizes.find(size => size.size === 'S') || sizes[0];
+  
+          return {
+              ...product,
+              product_sizes: sizes,
+              default_price: defaultSize ? defaultSize.price : 0, 
+              discount_price: defaultSize ? defaultSize.priceProduct : 0 
+          };
+      });
+  
+      return { products: productsWithSizes };
   }
+  
 
   @Get('/products/:id')
   async getProductById(@Param('id') id: number) {
@@ -119,9 +128,14 @@ export class ApiController {
 
     return { user: (req as any).session.user };
   }
-  @Get('user')
+  @Get('/user')
   async getUser(@Session() session) {
     return { user: session.user || null };
+  }
+  @Get('/categories')
+  async getAllCategories() {
+    const categories = await this.categoriesService.getAll();
+    return { categories };
   }
 
 }

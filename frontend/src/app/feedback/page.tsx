@@ -1,145 +1,104 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion"; // Thêm animation mượt mà
+import { Form, Input, Button, message, Card, Typography } from "antd";
+import { motion } from "framer-motion";
+import { MailOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
+
+const { Title, Paragraph } = Typography;
 
 export default function FeedbackPage() {
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        subjectName: "",
-        note: "",
-    });
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
-    const [status, setStatus] = useState<{ type: "success" | "error" | ""; message: string }>({ type: "", message: "" });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setStatus({ type: "", message: "Đang gửi feedback..." });
+    const handleSubmit = async (values: { 
+        firstName: string;
+        lastName: string;
+        email: string;
+        phoneNumber: string;
+        subjectName: string;
+        note: string;
+    }) => {
+        setLoading(true);
+        message.loading({ content: "Submitting feedback...", key: "feedback" });
 
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/feedbacks/create`, formData);
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/feedbacks/create`,
+                values
+            );
 
             if (response.status >= 200 && response.status < 300) {
-                setStatus({ type: "success", message: "Gửi feedback thành công!" });
-
-                // Reset form sau khi gửi thành công
-                setFormData({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    phoneNumber: "",
-                    subjectName: "",
-                    note: "",
-                });
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    setStatus({ type: "", message: "" });
-                }, 3000);
+                message.success({ content: "Feedback submitted successfully!", key: "feedback" });
+                form.resetFields();
             } else {
-                setStatus({ type: "error", message: "Không thể gửi feedback, thử lại sau" });
+                message.error({ content: "Failed to submit feedback, please try again.", key: "feedback" });
             }
         } catch (error) {
-            console.error("Lỗi gửi feedback:", error);
-            setStatus({ type: "error", message: "Gửi feedback thất bại" });
+            message.error({ content: "Submission failed, please try again.", key: "feedback" });
         }
+
+        setLoading(false);
     };
 
     return (
-        <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold text-center mb-4">Submit Feedback</h2>
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg flex flex-col md:flex-row"
+        >
+            {/* Left Section: Contact Info / Image */}
+            <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6">
+                <img 
+                    src="https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg" 
+                    alt="Contact Us" 
+                    className="w-full h-64 object-cover rounded-lg shadow-md mb-6"
+                />
 
-            {/* Hiển thị thông báo với hiệu ứng động */}
-            {status.message && (
-                <motion.div
-                    className={`text-center p-2 mb-4 rounded-md ${
-                        status.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                    }`}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                >
-                    {status.message}
-                </motion.div>
-            )}
+                <Title level={3} className="text-center">Contact Information</Title>
+                <Paragraph className="flex items-center gap-2">
+                    <MailOutlined /> support@example.com
+                </Paragraph>
+                <Paragraph className="flex items-center gap-2">
+                    <PhoneOutlined /> +1 234 567 890
+                </Paragraph>
+                <Paragraph className="flex items-center gap-2">
+                    <EnvironmentOutlined /> 123 Main Street, New York, USA
+                </Paragraph>
+            </div>
 
-            <form onSubmit={handleSubmit} method="post" className="space-y-4">
-                <div>
-                    <label className="block font-medium">First Name</label>
-                    <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded-md"
-                    />
-                </div>
-                <div>
-                    <label className="block font-medium">Last Name</label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded-md"
-                    />
-                </div>
-                <div>
-                    <label className="block font-medium">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded-md"
-                    />
-                </div>
-                <div>
-                    <label className="block font-medium">Phone</label>
-                    <input
-                        type="text"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded-md"
-                    />
-                </div>
-                <div>
-                    <label className="block font-medium">Subject</label>
-                    <input
-                        type="text"
-                        name="subjectName"
-                        value={formData.subjectName}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded-md"
-                    />
-                </div>
-                <div>
-                    <label className="block font-medium">Note</label>
-                    <textarea
-                        name="note"
-                        value={formData.note}
-                        onChange={handleChange}
-                        className="w-full p-2 border rounded-md"
-                        rows={4}
-                    />
-                </div>
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md">
-                    Submit
-                </button>
-            </form>
-        </div>
+            {/* Right Section: Feedback Form */}
+            <div className="w-full md:w-1/2 p-6">
+                <Title level={2} className="text-center">Submit Feedback</Title>
+                <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Form.Item name="firstName" label="First Name" rules={[{ required: true, message: "First Name is required" }]}> 
+                            <Input placeholder="Enter your first name" />
+                        </Form.Item>
+                        <Form.Item name="lastName" label="Last Name" rules={[{ required: true, message: "Last Name is required" }]}> 
+                            <Input placeholder="Enter your last name" />
+                        </Form.Item>
+                    </div>
+                    <Form.Item name="email" label="Email" rules={[{ required: true, type: "email", message: "Enter a valid email" }]}> 
+                        <Input placeholder="Enter your email" />
+                    </Form.Item>
+                    <Form.Item name="phoneNumber" label="Phone" rules={[{ required: true, message: "Phone number is required" }]}> 
+                        <Input placeholder="Enter your phone number" />
+                    </Form.Item>
+                    <Form.Item name="subjectName" label="Subject" rules={[{ required: true, message: "Subject is required" }]}> 
+                        <Input placeholder="Enter the subject" />
+                    </Form.Item>
+                    <Form.Item name="note" label="Note"> 
+                        <Input.TextArea rows={4} placeholder="Enter your feedback" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" block loading={loading}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
+        </motion.div>
     );
 }

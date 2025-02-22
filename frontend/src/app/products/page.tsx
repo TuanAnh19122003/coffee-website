@@ -2,79 +2,157 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { Card, Spin, Typography, Layout, Menu, Row, Col, Image, Empty, Pagination } from "antd";
+
+const { Title } = Typography;
+const { Sider, Content } = Layout;
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+    const [products, setProducts] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/products`);
-        setProducts(response.data.products);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setLoading(false);
-      }
+    // Phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(8); // 8 sản phẩm mỗi trang
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`);
+                setProducts(response.data.products);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`);
+                setCategories(response.data.categories);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchProducts();
+        fetchCategories();
+    }, []);
+
+    // Lọc sản phẩm theo danh mục
+    const filteredProducts = selectedCategory
+        ? products.filter((product) => product.category?.id === selectedCategory)
+        : products;
+
+    // Cắt danh sách theo trang
+    const paginatedProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    // Xử lý thay đổi trang
+    const handlePageChange = (page: number, pageSize: number) => {
+        setCurrentPage(page);
+        setPageSize(pageSize);
     };
 
-    fetchProducts();
-  }, []);
+    const categoryItems = [
+        { label: "All Products", key: "all", onClick: () => setSelectedCategory(null) },
+        ...categories.map((category) => ({
+            label: category.name,
+            key: category.id,
+            onClick: () => setSelectedCategory(category.id)
+        }))
+    ];
 
-  if (loading) return <p>Loading...</p>;
+    return (
+        <Layout className="flex mx-auto p-4 mt-16">
+            {/* Sidebar Category Filter */}
+            <Sider width={250} className="p-4 bg-white shadow-md rounded-lg">
+                <Title level={4} className="text-center">Categories</Title>
+                <Menu mode="inline" selectedKeys={selectedCategory ? [selectedCategory] : ["all"]} items={categoryItems} />
+            </Sider>
 
-  return (
-    <div className="max-w-7xl mx-auto p-4">
-      <h1 className="text-4xl font-bold text-center mb-6">Products</h1>
-      {products.length === 0 ? (
-        <p className="text-center text-lg text-gray-500">No products available</p>
-      ) : (
-        <ul className="space-y-6">
-          {products.map((product: any) => (
-            <li key={product.id} className="bg-white p-6 rounded-lg shadow-md">
-              <Link href={`/products/${product.id}`} className="block hover:opacity-80 transition">
-                <div className="flex items-center space-x-6">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                    alt={product.name}
-                    width={128} // Điều chỉnh kích thước theo nhu cầu
-                    height={128}
-                    className="object-cover rounded-lg" 
-                  />
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-semibold">{product.name}</h2>
-                    <p className="text-gray-600 text-sm">Category: {product.category?.name || 'No category'}</p>
-                    {/* <p className="mt-2 text-gray-700">Description: {product.description || 'No description available'}</p> */}
+            {/* Product List */}
+            <Content className="p-4 flex-grow">
+                <Title level={2} className="text-center mb-6">Products</Title>
+                {loading ? (
+                    <Spin size="large" className="block mx-auto" />
+                ) : paginatedProducts.length === 0 ? (
+                    <Empty description="No products available" className="mt-10" />
+                ) : (
+                    <>
+                        <Row gutter={[16, 16]}>
+                            {paginatedProducts.map((product) => (
+                                <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ height: 380, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                        cover={
+                                            <Image
+                                                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                                alt={product.name}
+                                                className="rounded-lg"
+                                                style={{ height: 200, objectFit: "cover" }}
+                                            />
+                                        }
+                                    >
+                                        <Title
+                                            level={4}
+                                            style={{
+                                                height: 48,
+                                                overflow: "hidden",
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: "vertical",
+                                            }}
+                                        >
+                                            {product.name}
+                                        </Title>
+                                        <p className="text-gray-500">Category: {product.category?.name || "No category"}</p>
 
-                    <div className="mt-4">
-                      <h3 className="text-lg font-semibold">Sizes and Prices:</h3>
-                      {product.product_sizes && product.product_sizes.length > 0 ? (
-                        <ul className="space-y-2 mt-2">
-                          {product.product_sizes.map((size: any) => (
-                            <li key={size.id} className="flex justify-between items-center">
-                              <span className="font-medium">{size.size || 'No size'}</span>
-                              <span className="text-gray-500">
-                                Price: {size.price ? `${size.price}` : 'N/A'} | Discounted Price:{" "}
-                                {size.priceProduct ? `${size.priceProduct}` : 'N/A'}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-gray-500">No sizes available</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-              
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+                                        {/* Hiển thị giá tiền */}
+                                        <p className="text-lg font-semibold text-red-500">
+                                            {product.discount > 0 ? (
+                                                <>
+                                                    <span className="line-through text-gray-500">
+                                                        {product.default_price.toLocaleString("vi-VN")}
+                                                    </span>
+                                                    {" "}
+                                                    {Number(product.discount_price).toLocaleString("vi-VN", {
+                                                        style: "currency",
+                                                        currency: "VND",
+                                                    })}
+                                                </>
+                                            ) : (
+                                                <>{product.default_price.toLocaleString("vi-VN")}</>
+                                            )}
+                                        </p>
+
+                                        <Link href={`/products/${product.id}`} className="text-blue-500 hover:underline">
+                                            View Details
+                                        </Link>
+                                    </Card>
+
+                                </Col>
+                            ))}
+                        </Row>
+
+                        {/* Pagination */}
+                        <div className="flex justify-center mt-6">
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={filteredProducts.length}
+                                onChange={handlePageChange}
+                                showSizeChanger
+                            />
+                        </div>
+                    </>
+                )}
+            </Content>
+        </Layout>
+    );
 };
 
 export default ProductsPage;

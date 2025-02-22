@@ -1,31 +1,26 @@
+import React from "react";
 import Link from "next/link";
 
 export const Footer = () => {
     return (
-        <footer className="bg-gray-100 dark:bg-gray-800 shadow-sm mt-8">
-            <div className="w-full mx-auto max-w-screen-xl px-6 py-4 md:flex md:items-center md:justify-between">
+        <div className="bg-white dark:bg-gray-900 shadow-sm mt-8 p-6">
+            <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center text-gray-600 dark:text-gray-300 text-sm font-medium">
                 {/* Bản quyền */}
-                <span className="text-sm text-gray-600 dark:text-gray-300 text-center md:text-left block mb-4 md:mb-0">
-                    © {new Date().getFullYear()}
-                    <a href="/" className="hover:underline font-semibold"> Coffee Shop™</a> - All rights reserved.
-                </span>
+                <p>
+                    © {new Date().getFullYear()}  
+                    <Link href="/" className="hover:text-blue-500 font-semibold ml-1">
+                        Coffee Shop™
+                    </Link> - All rights reserved.
+                </p>
 
                 {/* Menu */}
-                <ul className="flex flex-wrap justify-center md:justify-end items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-300">
-                    <li>
-                        <a href="/products" className="hover:underline">Product</a>
-                    </li>
-                    <li>
-                        <a href="#" className="hover:underline">Privacy Policy</a>
-                    </li>
-                    <li>
-                        <a href="#" className="hover:underline">Licensing</a>
-                    </li>
-                    <li>
-                        <a href="#" className="hover:underline">Contact</a>
-                    </li>
-                </ul>
+                <div className="flex flex-wrap gap-6">
+                    <Link href="/products" className="hover:text-blue-500">Products</Link>
+                    <Link href="#" className="hover:text-blue-500">Privacy Policy</Link>
+                    <Link href="#" className="hover:text-blue-500">Licensing</Link>
+                    <Link href="#" className="hover:text-blue-500">Contact</Link>
+                </div>
             </div>
-        </footer>
-    )
-}
+        </div>
+    );
+};
