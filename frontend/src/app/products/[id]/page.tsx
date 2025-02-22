@@ -84,21 +84,27 @@ const ProductDetailPage = () => {
                 <Title level={3} className="mt-4">
                     {selectedSize ? (
                         <>
-                            {selectedSize.priceProduct ? (
+                            {selectedSize.priceProduct && selectedSize.priceProduct < selectedSize.price ? (
                                 <>
                                     <Text delete type="secondary" className="mr-2">
-                                        {selectedSize.price} VND
+                                        {Math.round(selectedSize.price).toLocaleString("vi-VN")} ₫
                                     </Text>
-                                    <Text className="text-red-500">{selectedSize.priceProduct} VND</Text>
+                                    <Text className="text-red-500">
+                                        {Math.round(selectedSize.priceProduct).toLocaleString("vi-VN")} ₫
+                                    </Text>
                                 </>
                             ) : (
-                                <Text>{selectedSize.price} VND</Text>
+                                <Text>
+                                    {Math.round(selectedSize.price).toLocaleString("vi-VN")} ₫
+                                </Text>
                             )}
                         </>
                     ) : (
                         "Select a size to see the price"
                     )}
                 </Title>
+
+
 
                 {/* Nút Thêm vào giỏ hàng & Mua ngay */}
                 <div className="mt-6 flex gap-4">

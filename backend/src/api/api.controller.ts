@@ -1,4 +1,6 @@
-import { Controller, Get, Param, NotFoundException, Post, Body, UnauthorizedException, Req, InternalServerErrorException, Session } from '@nestjs/common';
+import { Controller, Get, UploadedFile, UseInterceptors, Param, Put, NotFoundException, Post, Body, UnauthorizedException, Req, InternalServerErrorException, Session } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { ProductsService } from 'src/modules/products/products.service';
 import { ProductSizesService } from 'src/modules/product_sizes/product_sizes.service';
 import { FeedbacksService } from 'src/modules/feedbacks/feedbacks.service';
@@ -8,6 +10,8 @@ import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { BcryptHelper } from 'src/utils/bcrypt.helper';
 import { CategoriesService } from 'src/modules/categories/categories.service';
+import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
+import { multerConfig } from 'src/config/multer-config';
 
 @Controller('api')
 export class ApiController {
@@ -23,28 +27,28 @@ export class ApiController {
   // API lấy tất cả sản phẩm
   @Get('/products')
   async getAllProducts() {
-      const products = await this.productsService.getAllProduct();
-      const productSizes = await this.productSizesService.getAllProductSize();
-  
-      const productsWithSizes = products.map((product) => {
-          const sizes = productSizes.filter(
-              (size) => size.productId === product.id,
-          );
-  
-          // Lấy size S hoặc size đầu tiên nếu không có size S
-          const defaultSize = sizes.find(size => size.size === 'S') || sizes[0];
-  
-          return {
-              ...product,
-              product_sizes: sizes,
-              default_price: defaultSize ? defaultSize.price : 0, 
-              discount_price: defaultSize ? defaultSize.priceProduct : 0 
-          };
-      });
-  
-      return { products: productsWithSizes };
+    const products = await this.productsService.getAllProduct();
+    const productSizes = await this.productSizesService.getAllProductSize();
+
+    const productsWithSizes = products.map((product) => {
+      const sizes = productSizes.filter(
+        (size) => size.productId === product.id,
+      );
+
+      // Lấy size S hoặc size đầu tiên nếu không có size S
+      const defaultSize = sizes.find(size => size.size === 'S') || sizes[0];
+
+      return {
+        ...product,
+        product_sizes: sizes,
+        default_price: defaultSize ? defaultSize.price : 0,
+        discount_price: defaultSize ? defaultSize.priceProduct : 0
+      };
+    });
+
+    return { products: productsWithSizes };
   }
-  
+
 
   @Get('/products/:id')
   async getProductById(@Param('id') id: number) {
@@ -128,6 +132,31 @@ export class ApiController {
 
     return { user: (req as any).session.user };
   }
+ 
+  @Post('/me')
+  @UseInterceptors(FileInterceptor('image', multerConfig))  // Sử dụng cấu hình multer đã tạo
+  async updateProfile(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const userId = (req as any).session.user.id;
+
+    // Kiểm tra xem có file ảnh gửi lên không
+    if (file) {
+      const filePath = `/uploads/${file.filename}`;
+      updateUserDto.image = filePath; // Lưu đường dẫn ảnh vào DTO
+    }
+
+    // Cập nhật thông tin người dùng
+    const updatedUser = await this.usersService.update(userId, updateUserDto, file);
+
+    // Cập nhật lại session với thông tin người dùng mới
+    (req as any).session.user = updatedUser;
+
+    return { user: updatedUser };
+  }
+
   @Get('/user')
   async getUser(@Session() session) {
     return { user: session.user || null };
