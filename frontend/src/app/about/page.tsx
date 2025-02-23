@@ -9,38 +9,20 @@ const { Title, Paragraph } = Typography;
 const { Content } = Layout;
 
 const AboutUsPage = () => {
-    const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchRandomProducts = async () => {
-            try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/random`);
-                if (Array.isArray(response.data)) {
-                    setProducts(response.data);
-                } else {
-                    console.error("Dữ liệu trả về không phải là mảng:", response.data);
-                    message.error("Có lỗi khi tải sản phẩm");
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                message.error("Có lỗi khi tải sản phẩm");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchRandomProducts();
+        setLoading(false);
     }, []);
-
 
     return (
         <Layout className="p-4 mt-16">
             {/* About Us Content */}
+            {/* About Us Content */}
             <Content className="flex-grow p-4">
-                {/* Space for Quán giới thiệu */}
+                {/* Chào mừng đến Quán Xưởng Cà Phê */}
                 <Title level={1} className="text-center mb-6">
-                    Chào Mừng Đến Với Quán Cà Phê Xưởng!
+                    Chào Mừng Đến Với Quán Xưởng Cà Phê!
                 </Title>
                 <Row gutter={[16, 24]} className="mb-6">
                     <Col xs={14} sm={12}>
@@ -56,99 +38,80 @@ const AboutUsPage = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                         <Paragraph>
-                            Quán cà phê Xưởng được thiết kế để mang đến không gian thư giãn, hiện đại nhưng vẫn giữ lại nét ấm cúng và lãng mạn. Chúng tôi sử dụng nguyên liệu hảo hạng và cam kết mang đến những tách cà phê chất lượng nhất cho mọi khách hàng.
+                            Quán cà phê Xưởng không chỉ là nơi để thưởng thức những ly cà phê thơm ngon mà còn là một không gian lý tưởng để thư giãn, trò chuyện cùng bạn bè hoặc đơn giản là tìm về một chút yên bình giữa cuộc sống hối hả.
                         </Paragraph>
                         <Paragraph>
-                            Với phong cách thiết kế độc đáo và dịch vụ tận tâm, chúng tôi hy vọng mỗi lần đến quán sẽ là một trải nghiệm đáng nhớ cho bạn.
+                            Được thiết kế với phong cách hiện đại, ấm cúng, quán mang lại một không gian dễ chịu với các khu vực ngồi thoải mái, thích hợp cho mọi nhu cầu – từ một buổi họp mặt bạn bè đến những cuộc trò chuyện riêng tư. Chúng tôi tin rằng mỗi người đến quán sẽ cảm nhận được sự gần gũi và thân thiện, như đang ở chính ngôi nhà của mình.
+                        </Paragraph>
+                        <Paragraph>
+                            Không gian quán được bố trí hợp lý, từ những góc thư giãn nhẹ nhàng cho đến những khu vực sinh hoạt chung năng động. Mỗi chi tiết trong thiết kế đều hướng đến việc tạo ra một môi trường mở, hòa hợp với thiên nhiên, giúp mỗi khách hàng không chỉ thưởng thức cà phê mà còn trải nghiệm sự bình yên trong tâm hồn.
+                        </Paragraph>
+                        <Paragraph>
+                            Đặc biệt, chúng tôi chú trọng đến việc chọn lựa nguyên liệu đầu vào, từ những hạt cà phê nguyên chất, được chọn lọc kỹ lưỡng, đến các sản phẩm đồng hành như bánh ngọt, đồ uống tươi ngon, tất cả đều được chế biến với sự tận tâm và đam mê. Với chúng tôi, cà phê không chỉ là thức uống, mà là một phần trong những khoảnh khắc tuyệt vời mà bạn trải qua mỗi ngày.
+                        </Paragraph>
+                        <Paragraph>
+                            Ngoài cà phê, chúng tôi còn phục vụ các loại đồ uống và món ăn nhẹ khác, mang đến cho bạn một trải nghiệm trọn vẹn. Với đội ngũ nhân viên nhiệt tình và chuyên nghiệp, chúng tôi luôn mong muốn mang lại sự hài lòng và niềm vui cho khách hàng mỗi lần ghé thăm.
                         </Paragraph>
                     </Col>
                 </Row>
 
-
-                {/* Các đặc trưng của quán */}
-                <Title level={2} className="mb-6 text-center">
-                    Các Đặc Trưng Của Quán
-                </Title>
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={8}>
-                        <Card variant="outlined" hoverable>
-                            <Title level={4}>Không Gian Thư Giãn</Title>
-                            <Paragraph>
-                                Quán của chúng tôi có không gian rộng rãi, thoáng mát, thích hợp cho mọi cuộc hẹn hoặc những giờ thư giãn một mình.
-                            </Paragraph>
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={8}>
-                        <Card variant="outlined" hoverable>
-                            <Title level={4}>Cà Phê Đặc Sản</Title>
-                            <Paragraph>
-                                Được chế biến từ những hạt cà phê nguyên chất, chúng tôi luôn mang đến những tách cà phê đậm đà, hương vị tuyệt vời.
-                            </Paragraph>
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={8}>
-                        <Card variant="outlined" hoverable>
-                            <Title level={4}>Dịch Vụ Tận Tâm</Title>
-                            <Paragraph>
-                                Đội ngũ nhân viên chuyên nghiệp luôn sẵn sàng phục vụ và mang đến trải nghiệm thoải mái nhất cho khách hàng.
-                            </Paragraph>
-                        </Card>
-                    </Col>
-                </Row>
-
-                <Title level={2} className="mb-6 text-center">
-                    Các Món Cà Phê Phổ Biến
-                </Title>
-                {loading ? (
-                    <div className="flex justify-center">
-                        <Spin size="large" />
-                    </div>
-                ) : (
+                {/* Sứ Mệnh và Tầm Nhìn */}
+                <div className="featured-section" style={{ background: '#fff', padding: '40px 0' }}>
+                    <Title level={2} className="text-center mb-6">
+                        Sứ Mệnh và Tầm Nhìn
+                    </Title>
                     <Row gutter={[16, 16]} justify="center">
-                        {products.length > 0 ? (
-                            products.map((product, index) => (
-                                index < 4 && (  // Chỉ lấy 4 sản phẩm
-                                    <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-                                        <Link href={`/products`} passHref>
-                                            <Card
-                                                hoverable
-                                                style={{ height: '100%' }}
-                                                cover={
-                                                    <Image
-                                                        src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                                                        alt={product.name}
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '200px',
-                                                            objectFit: 'contain',
-                                                            objectPosition: 'center',
-                                                        }}
-                                                    />
-                                                }
-                                            >
-                                                <Title level={4} className="truncate">{product.name}</Title>
-                                                <p>{product.category?.name}</p>
-                                            </Card>
-                                        </Link>
-                                    </Col>
-                                )
-                            ))
-                        ) : (
-                            <Empty description="No popular products found" />
-                        )}
+                        <Col xs={24} sm={8}>
+                            <Card hoverable>
+                                <Title level={4}>Sứ Mệnh</Title>
+                                <div style={{ height: '300px', overflow: 'hidden' }}>
+                                    <Image
+                                        src="/mission.jpg"
+                                        alt="Sứ mệnh"
+                                        style={{
+                                            width: '100%',
+                                            height: 'auto',
+                                            objectFit: 'cover',
+                                            objectPosition: 'center',
+                                        }}
+                                    />
+                                </div>
+                                <Paragraph>
+                                    Sứ mệnh của chúng tôi là mang lại những trải nghiệm cà phê tuyệt vời, gắn liền với sự tận tâm và chất lượng, giúp khách hàng cảm nhận được sự thư giãn tuyệt đối ngay tại quán.
+                                </Paragraph>
+                            </Card>
+                        </Col>
+                        <Col xs={24} sm={8}>
+                            <Card hoverable>
+                                <Title level={4}>Tầm Nhìn</Title>
+                                <div style={{ height: '300px', overflow: 'hidden' }}>
+                                    <Image
+                                        src="/vision.jpg"
+                                        alt="Tầm nhìn"
+                                        style={{
+                                            width: '100%',
+                                            height: '235px',
+                                            objectFit: 'cover',
+                                        }}
+                                    />
+                                </div>
+                                <Paragraph>
+                                    Chúng tôi mong muốn trở thành một địa chỉ quen thuộc cho những ai yêu thích cà phê chất lượng và không gian thư giãn, là nơi giúp mỗi người tìm lại sự bình an trong nhịp sống vội vã.
+                                </Paragraph>
+                            </Card>
+                        </Col>
                     </Row>
-                )}
+                </div>
 
-                {/* Contact Section */}
+                {/* Liên Hệ */}
                 <div style={{ marginTop: '50px' }}>
                     <Title level={2} className="text-center">
                         Liên Hệ Với Chúng Tôi
                     </Title>
-                    {/* Nút liên hệ với ảnh nền */}
                     <div
                         style={{
                             background: `url('/background-image.jpg') no-repeat center center`,
-                            backgroundSize: 'cover', // Đảm bảo nền sẽ cover toàn bộ không gian
+                            backgroundSize: 'cover',
                             height: '200px',
                             padding: '0',
                             display: 'flex',
@@ -166,15 +129,15 @@ const AboutUsPage = () => {
                             style={{
                                 width: '200px',
                                 height: '50px',
-                                fontSize: '18px', // Điều chỉnh kích thước font để nút trông dễ nhìn hơn
+                                fontSize: '18px',
                             }}
                         >
                             Gửi Liên Hệ
                         </Button>
                     </div>
-
                 </div>
             </Content>
+
         </Layout>
     );
 };

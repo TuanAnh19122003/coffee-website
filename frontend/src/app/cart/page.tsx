@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { Card, Button, Typography, Layout, Row, Col, message, Image, Empty, InputNumber, Select } from "antd";
+import { Table, Button, Typography, Layout, message, Image, Empty, InputNumber, Select } from "antd";
 import { DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -15,11 +15,9 @@ const CartPage = () => {
     const [totalAmount, setTotalAmount] = useState(0);
 
     const { Option } = Select;
-    
 
     const getProductPrice = (product: any, size: string) => {
         const selectedSize = product.product_sizes.find((item: any) => item.size === size);
-
         if (!selectedSize) {
             return 0;
         }
@@ -34,7 +32,6 @@ const CartPage = () => {
 
         return formatPrice(price);
     };
-
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
@@ -72,8 +69,6 @@ const CartPage = () => {
         );
         setCart(updatedCart);
         localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
-
-        // Update total amount
         updateTotalAmount(updatedCart);
     };
 
@@ -103,7 +98,6 @@ const CartPage = () => {
                     return isNaN(cleanPrice) ? 0 : cleanPrice;
                 };
 
-                // Kiểm tra lại để chắc chắn lấy đúng giá theo size và số lượng
                 const price = selectedSize.discount_price > 0
                     ? formatPrice(selectedSize.discount_price)
                     : formatPrice(selectedSize.price);
@@ -117,11 +111,93 @@ const CartPage = () => {
         }
     };
 
-
-
     useEffect(() => {
         updateTotalAmount(cart);
     }, [cart, products]);
+
+    const columns = [
+        {
+            title: "Sản phẩm",
+            dataIndex: "product",
+            render: (text: any, record: any) => (
+                <div className="flex items-center">
+                    <Image
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${record.image}` || "/images/placeholder.png"}
+                        alt={record.name}
+                        style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px", marginRight: "10px" }}
+                    />
+                </div>
+            ),
+        },
+        {
+            title: "Tên",
+            dataIndex: "name",
+            render: (text: any, record: any) => (
+                <span>
+                    {record.name}
+                </span>
+            ),
+        },
+        {
+            title: "Size",
+            dataIndex: "size",
+            render: (text: string, record: any) => (
+                <Select
+                    value={record.size}
+                    onChange={(newSize) => {
+                        const updatedCart = cart.map((item) =>
+                            item.id === record.id ? { ...item, size: newSize } : item
+                        );
+                        setCart(updatedCart);
+                        localStorage.setItem(`cart_${localStorage.getItem("userId")}`, JSON.stringify(updatedCart));
+                        updateTotalAmount(updatedCart);
+                    }}
+                    style={{ width: "100px" }}
+                >
+                    {record.product_sizes.map((item: any) => (
+                        <Option key={item.size} value={item.size}>
+                            {item.size}
+                        </Option>
+                    ))}
+                </Select>
+            ),
+        },
+        {
+            title: "Giá",
+            dataIndex: "price",
+            render: (text: any, record: any) => (
+                <span>
+                    {getProductPrice(record, record.size).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                </span>
+            ),
+        },
+        {
+            title: "Số lượng",
+            dataIndex: "quantity",
+            render: (text: any, record: any) => (
+                <InputNumber
+                    min={1}
+                    value={record.quantity}
+                    onChange={(value) => updateQuantity(record.id, value || 1)}
+                    style={{ width: "80px" }}
+                />
+            ),
+        },
+        {
+            title: "Hành động",
+            dataIndex: "action",
+            render: (text: any, record: any) => (
+                <Button
+                    type="primary"
+                    icon={<DeleteOutlined />}
+                    danger
+                    onClick={() => removeFromCart(record.id)}
+                >
+                    Xóa
+                </Button>
+            ),
+        },
+    ];
 
     return (
         <Layout className="mx-auto p-4 mt-16">
@@ -141,82 +217,17 @@ const CartPage = () => {
                     </Empty>
                 ) : (
                     <>
-                        <Row gutter={[16, 16]}>
-                            {products.map((product) => {
-                                const cartItem = cart.find((item) => item.id === product.id);
-                                const quantity = cartItem ? cartItem.quantity : 1;
-                                const size = cartItem ? cartItem.size : "Chưa chọn size"; // Lấy size từ giỏ hàng
-
-                                return (
-                                    <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-                                        <Card
-                                            className="relative"
-                                            hoverable
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "space-between",
-                                            }}
-                                        >
-                                            <Image
-                                                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}` || "/images/placeholder.png"}
-                                                alt={product.name}
-                                                style={{
-                                                    width: "100%",
-                                                    height: "200px",
-                                                    objectFit: "cover",
-                                                    borderRadius: "8px",
-                                                }}
-                                            />
-                                            <Title level={4}>{product.name}</Title>
-                                            <p className="text-gray-500">Category: {product.category?.name || "No category"}</p>
-                                            <p className="text-lg font-semibold text-red-500">
-                                                {getProductPrice(product, size).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}{" "}
-                                            </p>
-
-                                            {/* Dropdown để chọn lại size */}
-                                            <p className="text-sm text-gray-600">Size:</p>
-                                            <Select
-                                                value={size}
-                                                onChange={(newSize) => {
-                                                    const updatedCart = cart.map((item) =>
-                                                        item.id === product.id ? { ...item, size: newSize } : item
-                                                    );
-                                                    setCart(updatedCart);
-                                                    localStorage.setItem(`cart_${localStorage.getItem("userId")}`, JSON.stringify(updatedCart));
-                                                    updateTotalAmount(updatedCart);
-                                                }}
-                                                style={{ width: "100%" }}
-                                            >
-                                                {product.product_sizes.map((item:any) => (
-                                                    <Option key={item.size} value={item.size}>
-                                                        {item.size}
-                                                    </Option>
-                                                ))}
-                                            </Select>
-
-                                            <div className="flex justify-between items-center mt-4">
-                                                <Button
-                                                    type="primary"
-                                                    icon={<DeleteOutlined />}
-                                                    danger
-                                                    onClick={() => removeFromCart(product.id)}
-                                                >
-                                                    Xóa
-                                                </Button>
-                                                <InputNumber
-                                                    min={1}
-                                                    value={quantity}
-                                                    onChange={(value) => updateQuantity(product.id, value || 1)}
-                                                    style={{ width: "80px" }}
-                                                />
-                                            </div>
-                                        </Card>
-                                    </Col>
-                                );
-                            })}
-
-                        </Row>
+                        <Table
+                            columns={columns}
+                            dataSource={products.map((product) => ({
+                                ...product,
+                                product_sizes: product.product_sizes,
+                                size: cart.find((item) => item.id === product.id)?.size || "Chưa chọn size",
+                                quantity: cart.find((item) => item.id === product.id)?.quantity || 1,
+                            }))}
+                            rowKey="id"
+                            pagination={false}
+                        />
 
                         <div className="flex justify-between mt-6">
                             <div className="text-xl font-semibold">

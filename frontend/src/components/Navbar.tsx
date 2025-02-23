@@ -81,13 +81,10 @@ export const Navbar = () => {
         },
     ];
     
-    
-    
-
     return (
         <Layout.Header className="flex justify-between items-center bg-white shadow-md px-6">
             <Link href="/" className="flex items-center space-x-3">
-                <Image src="/Logo.jpg" width={50} height={50} alt="Logo" />
+                <Image src="/Logo.png" width={50} height={50} alt="Logo" />
                 <span className="text-2xl font-semibold">Xưởng Cafe</span>
             </Link>
 
