@@ -8,7 +8,6 @@ import { CreateFeedbackDto } from 'src/modules/feedbacks/dto/create-feedback.dto
 import { AuthService } from 'src/modules/users/auth/auth.service';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { UsersService } from 'src/modules/users/users.service';
-import { BcryptHelper } from 'src/utils/bcrypt.helper';
 import { CategoriesService } from 'src/modules/categories/categories.service';
 import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
 import { multerConfig } from 'src/config/multer-config';

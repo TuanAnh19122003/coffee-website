@@ -13,6 +13,7 @@ import { OrderDetailsModule } from './modules/order_details/order_details.module
 import { ApiController } from './api/api.controller';
 import { AuthService } from './modules/users/auth/auth.service';
 import { UserMiddleware } from './middlewares/user.middleware';
+import { AuthMiddleware } from './middlewares/auth.middleware';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { UserMiddleware } from './middlewares/user.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UserMiddleware).forRoutes('*');
+    consumer.apply(UserMiddleware).forRoutes('*')
+    consumer.apply(AuthMiddleware).forRoutes('/api/auth/login');
   }
 }

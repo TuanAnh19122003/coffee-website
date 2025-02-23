@@ -35,6 +35,12 @@ export const Navbar = () => {
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {}, { withCredentials: true });
             setUser(null);
+            const userId = localStorage.getItem("userId");
+        
+            if (userId) {
+                localStorage.removeItem("userId");
+                localStorage.removeItem(`user`);
+            }
             router.push('/auth/login');
         } catch (error) {
             console.error("Logout failed", error);

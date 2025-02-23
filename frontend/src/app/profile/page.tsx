@@ -39,9 +39,12 @@ export default function ProfilePage() {
     const handleEdit = () => {
         setEditing(true);
         form.setFieldsValue({
+            firstName: user?.firstName,
+            lastName: user?.lastName,
             email: user?.email,
             phone: user?.phone,
             address: user?.address,
+            password: '',
         });
     };
 
@@ -54,10 +57,16 @@ export default function ProfilePage() {
     const handleSave = () => {
         form.validateFields().then(values => {
             const formData = new FormData();
+            formData.append('firstName', values.firstName);
+            formData.append('lastName', values.lastName);
             formData.append('email', values.email);
             formData.append('phone', values.phone);
             formData.append('address', values.address);
-        
+            
+            if (values.password) {
+                formData.append('password', values.password);
+            }
+            
             if (newImage) {
                 formData.append('image', newImage);
             }
@@ -135,9 +144,16 @@ export default function ProfilePage() {
                                         <Text style={{ fontSize: '16px' }}><strong>Phone:</strong> {user.phone}</Text>
                                         <br />
                                         <Text style={{ fontSize: '16px' }}><strong>Address:</strong> {user.address}</Text>
+                                        <br />
                                     </div>
                                 ) : (
                                     <Form form={form} layout="vertical">
+                                        <Form.Item label="First Name" name="firstName" rules={[{ required: true, message: 'Please enter your first name' }]}>
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item label="Last Name" name="lastName" rules={[{ required: true, message: 'Please enter your last name' }]}>
+                                            <Input />
+                                        </Form.Item>
                                         <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}>
                                             <Input />
                                         </Form.Item>
@@ -146,6 +162,9 @@ export default function ProfilePage() {
                                         </Form.Item>
                                         <Form.Item label="Address" name="address" rules={[{ required: true, message: 'Please enter your address' }]}>
                                             <Input />
+                                        </Form.Item>
+                                        <Form.Item label="New Password" name="password">
+                                            <Input.Password placeholder="Leave blank to keep current password" />
                                         </Form.Item>
                                     </Form>
                                 )}
