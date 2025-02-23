@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation"; // Import useRouter
 import axios from "axios";
-import { Card, Typography, Image, List, Spin, Alert, Button, Radio } from "antd";
+import { Card, Typography, Image, List, Spin, Alert, Button, Radio, InputNumber, message } from "antd";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -12,6 +12,7 @@ const ProductDetailPage = () => {
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState<any>(null);
+    const [quantity, setQuantity] = useState(1); // Thêm state cho số lượng
 
     useEffect(() => {
         if (!id) return;
@@ -37,6 +38,39 @@ const ProductDetailPage = () => {
     if (loading) return <Spin size="large" className="block mx-auto mt-20" />;
     if (!product) return <Alert message="Product not found" type="error" showIcon className="mt-10" />;
 
+    const addToCart = () => {
+        const userId = localStorage.getItem("userId"); // Get userId from localStorage
+        if (!userId || !selectedSize) return; // Check if the user is logged in and a size is selected
+    
+        // Get the stored cart (if exists)
+        const storedCart = JSON.parse(localStorage.getItem(`cart_${userId}`) || "[]");
+    
+        // Check if the product is already in the cart
+        const existingProductIndex = storedCart.findIndex(
+            (item: any) => item.id === Number(id) && item.size === selectedSize.size
+        );
+    
+        if (existingProductIndex > -1) {
+            // If the product already exists, update the quantity
+            storedCart[existingProductIndex].quantity += quantity;
+        } else {
+            // If the product is new, add it to the cart
+            storedCart.push({
+                id: Number(id),
+                quantity,
+                size: selectedSize.size,
+                price: selectedSize.priceProduct || selectedSize.price,
+            });
+        }
+    
+        // Save the updated cart to localStorage
+        localStorage.setItem(`cart_${userId}`, JSON.stringify(storedCart));
+    
+        // Notify the user
+        message.success("Sản phẩm đã được thêm vào giỏ hàng!");
+    };
+    
+
     return (
         <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Nút Quay lại */}
@@ -53,7 +87,7 @@ const ProductDetailPage = () => {
                         src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                         alt={product.name}
                         className="rounded-lg"
-                        style={{ width: "100%", height: "500px", objectFit: "contain", objectPosition: "center"}}
+                        style={{ width: "100%", height: "500px", objectFit: "contain", objectPosition: "center" }}
                     />
                 </Image.PreviewGroup>
             </div>
@@ -80,6 +114,16 @@ const ProductDetailPage = () => {
                     ))}
                 </Radio.Group>
 
+                {/* Số lượng */}
+                <Title level={4} className="mt-5">Quantity</Title>
+                <InputNumber
+                    min={1}
+                    max={100}
+                    value={quantity}
+                    onChange={(value) => setQuantity(value ?? 1)}
+                    className="mt-2"
+                />
+
                 {/* Giá sản phẩm */}
                 <Title level={3} className="mt-4">
                     {selectedSize ? (
@@ -104,14 +148,12 @@ const ProductDetailPage = () => {
                     )}
                 </Title>
 
-
-
                 {/* Nút Thêm vào giỏ hàng & Mua ngay */}
                 <div className="mt-6 flex gap-4">
                     <Button type="primary" size="large" className="bg-blue-500">
                         Buy Now
                     </Button>
-                    <Button size="large" className="border-blue-500 text-blue-500">
+                    <Button size="large" onClick={addToCart} className="border-blue-500 text-blue-500">
                         Add to Cart
                     </Button>
                 </div>

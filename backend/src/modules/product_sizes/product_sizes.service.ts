@@ -49,7 +49,7 @@ export class ProductSizesService {
       const priceProduct = Number(product_size.price) * (1 - discount / 100);
       return {
         ...product_size,
-        priceProduct: priceProduct.toFixed(2),
+        priceProduct: priceProduct,
         price: product_size.price
           ? Format.formatPrice(Number(product_size.price))
           : 'N/A',

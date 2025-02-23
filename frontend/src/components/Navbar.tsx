@@ -13,6 +13,7 @@ export const Navbar = () => {
     const router = useRouter();
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
+    const [cartCount, setCartCount] = useState(0);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -29,6 +30,20 @@ export const Navbar = () => {
             }
         };
         fetchUser();
+    }, []);
+
+    useEffect(() => {
+        const updateCartCount = () => {
+            const userId = localStorage.getItem("userId");
+            if (userId) {
+                const storedCart = JSON.parse(localStorage.getItem(`cart_${userId}`) || "[]");
+                setCartCount(storedCart.length);
+            }
+        };
+
+        updateCartCount();
+        window.addEventListener("storage", updateCartCount); // Cập nhật khi `localStorage` thay đổi
+        return () => window.removeEventListener("storage", updateCartCount);
     }, []);
 
     const handleLogout = async () => {
@@ -90,9 +105,16 @@ export const Navbar = () => {
 
 
             <div className="flex items-center space-x-4">
-                <Button type="text" icon={<ShoppingCartOutlined />} className="relative">
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
-                </Button>
+                {/* Nút giỏ hàng */}
+                <Link href="/cart">
+                    <Button type="text" icon={<ShoppingCartOutlined />} className="relative">
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Button>
+                </Link>
 
                 {user ? (
                     <div className="flex items-center space-x-2">
