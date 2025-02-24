@@ -4,10 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Menu, Dropdown, Avatar, Button, Layout, MenuProps  } from "antd";
-import { UserOutlined, LogoutOutlined, SettingOutlined, HomeOutlined, ShoppingCartOutlined, InfoCircleOutlined, AppstoreOutlined, MessageOutlined } from "@ant-design/icons";
+import { Menu, Dropdown, Avatar, Button, Layout, MenuProps } from "antd";
+import { 
+    UserOutlined, LogoutOutlined, SettingOutlined, HomeOutlined, 
+    ShoppingCartOutlined, InfoCircleOutlined, AppstoreOutlined, 
+    MessageOutlined, DashboardOutlined 
+} from "@ant-design/icons";
 
 export const Navbar = () => {
     const router = useRouter();
@@ -42,7 +46,7 @@ export const Navbar = () => {
         };
 
         updateCartCount();
-        window.addEventListener("storage", updateCartCount); // Cập nhật khi `localStorage` thay đổi
+        window.addEventListener("storage", updateCartCount);
         return () => window.removeEventListener("storage", updateCartCount);
     }, []);
 
@@ -50,12 +54,8 @@ export const Navbar = () => {
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {}, { withCredentials: true });
             setUser(null);
-            const userId = localStorage.getItem("userId");
-        
-            if (userId) {
-                localStorage.removeItem("userId");
-                localStorage.removeItem(`user`);
-            }
+            localStorage.removeItem("userId");
+            localStorage.removeItem("user");
             router.push('/auth/login');
         } catch (error) {
             console.error("Logout failed", error);
@@ -73,6 +73,13 @@ export const Navbar = () => {
             label: <Link href="/settings">Settings</Link>,
             icon: <SettingOutlined />,
         },
+        ...(user?.role?.id === 1 ? [
+            {
+                key: "admin",
+                label: <Link href="http://localhost:5000">Admin Dashboard</Link>,
+                icon: <DashboardOutlined />,
+            },
+        ] : []),
         {
             key: "logout",
             label: "Logout",
@@ -80,7 +87,7 @@ export const Navbar = () => {
             onClick: handleLogout,
         },
     ];
-    
+
     return (
         <Layout.Header className="flex justify-between items-center bg-white shadow-md px-6">
             <Link href="/" className="flex items-center space-x-3">
@@ -100,9 +107,7 @@ export const Navbar = () => {
                 ]}
             />
 
-
             <div className="flex items-center space-x-4">
-                {/* Nút giỏ hàng */}
                 <Link href="/cart">
                     <Button type="text" icon={<ShoppingCartOutlined />} className="relative">
                         {cartCount > 0 && (
@@ -116,7 +121,7 @@ export const Navbar = () => {
                 {user ? (
                     <div className="flex items-center space-x-2">
                         <span className="font-medium">{user.lastName} {user.firstName}</span>
-                        <Dropdown menu={{ items: userMenuItems, style:{ minWidth: "150px" } }} placement="bottomLeft">
+                        <Dropdown menu={{ items: userMenuItems, style: { minWidth: "150px" } }} placement="bottomLeft">
                             <Avatar
                                 src={user.image?.startsWith("http") ? user.image : `${process.env.NEXT_PUBLIC_API_URL}${user.image}`}
                                 size={40}
@@ -131,7 +136,6 @@ export const Navbar = () => {
                     </Link>
                 )}
             </div>
-
         </Layout.Header>
     );
 };

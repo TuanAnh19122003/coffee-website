@@ -1,19 +1,27 @@
 import { Controller, Get, UploadedFile, UseInterceptors, Param, Put, NotFoundException, Post, Body, UnauthorizedException, Req, InternalServerErrorException, Session } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { ProductsService } from 'src/modules/products/products.service';
-import { ProductSizesService } from 'src/modules/product_sizes/product_sizes.service';
+
 import { FeedbacksService } from 'src/modules/feedbacks/feedbacks.service';
 import { CreateFeedbackDto } from 'src/modules/feedbacks/dto/create-feedback.dto';
 import { AuthService } from 'src/modules/users/auth/auth.service';
+import { multerConfig } from 'src/config/multer-config';
+
+import { CategoriesService } from 'src/modules/categories/categories.service';
+import { Product } from 'src/database/entities/product.entity';
+import { ProductsService } from 'src/modules/products/products.service';
+import { ProductSizesService } from 'src/modules/product_sizes/product_sizes.service';
+
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { UsersService } from 'src/modules/users/users.service';
-import { CategoriesService } from 'src/modules/categories/categories.service';
 import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
-import { multerConfig } from 'src/config/multer-config';
-import { Product } from 'src/database/entities/product.entity';
+
 import { OrdersService } from 'src/modules/orders/orders.service';
 import { CreateOrderDto } from 'src/modules/orders/dto/create-order.dto';
+
+import { PaymentsService } from 'src/modules/payments/payments.service';
+import { CreatePaymentDto } from 'src/modules/payments/dto/create-payment.dto';
+import { OrderStatus } from 'src/modules/orders/order-status.enum';
 
 @Controller('api')
 export class ApiController {
@@ -25,6 +33,7 @@ export class ApiController {
     private readonly usersService: UsersService,
     private readonly categoriesService: CategoriesService,
     private readonly ordersService: OrdersService,
+    private readonly paymentsService: PaymentsService,
   ) { }
 
   // API lấy tất cả sản phẩm
@@ -44,8 +53,9 @@ export class ApiController {
       return {
         ...product,
         product_sizes: sizes,
+        defaultSize: defaultSize ? defaultSize.size : 'S',
         default_price: defaultSize ? defaultSize.price : 0,
-        discount_price: defaultSize ? defaultSize.priceProduct : 0
+        discount_price: defaultSize ? defaultSize.priceProduct : 0,
       };
     });
 
@@ -181,7 +191,7 @@ export class ApiController {
 
   @Post('/orders')
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
-    console.log("Dữ liệu nhận được:", createOrderDto);
+    //console.log("Dữ liệu nhận được:", createOrderDto);
     try {
       const newOrder = await this.ordersService.createOrder(createOrderDto);
       return { message: 'Đơn hàng đã được tạo thành công', order: newOrder };
@@ -190,5 +200,5 @@ export class ApiController {
       throw new InternalServerErrorException('Lỗi khi tạo đơn hàng');
     }
   }
-  
+
 }

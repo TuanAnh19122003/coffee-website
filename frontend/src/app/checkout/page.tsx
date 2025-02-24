@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Layout, Table, Typography, Button, Input, message } from "antd";
+import { Layout, Table, Typography, Button, Input, message, Radio, Select } from "antd";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const { Title } = Typography;
 const { Content } = Layout;
+const { Option } = Select;
 
 const CheckoutPage = () => {
     const [cart, setCart] = useState<{ id: string; quantity: number; size: string }[]>([]);
@@ -16,6 +17,7 @@ const CheckoutPage = () => {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [note, setNote] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("COD");
     const router = useRouter();
 
     const getProductPrice = (product: any, size: string) => {
@@ -24,7 +26,7 @@ const CheckoutPage = () => {
             return 0;
         }
 
-        const price = selectedSize.discount_price > 0 ? selectedSize.discount_price : selectedSize.price;
+        const price = selectedSize.discount_price > 0 ? selectedSize.discount_price : selectedSize.priceProduct;
 
         const formatPrice = (price: any) => {
             if (!price) return 0;
@@ -75,9 +77,9 @@ const CheckoutPage = () => {
             message.error("Vui lòng nhập địa chỉ!");
             return;
         }
-
+    
         const userId = localStorage.getItem("userId");
-
+    
         const orderData = {
             userId: Number(userId),
             address,
@@ -91,29 +93,33 @@ const CheckoutPage = () => {
                     num: cartItem.quantity
                 };
             }),
+            totalAmount: calculateTotalAmount(),
             status: "PENDING"
         };
-        
-
+    
+        console.log("Order Data:", orderData);
+    
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, orderData);
-            console.log("URL API:", `${process.env.NEXT_PUBLIC_API_URL}/api/orders`);
-            console.log("Dữ liệu gửi lên API:", orderData);
-
-            if (response.status === 201 || response.status === 200) {
+            const orderResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, orderData);
+            console.log("Order Response:", orderResponse.data);
+    
+            if (orderResponse.status === 201) {
+                const orderId = orderResponse.data.id;
+                console.log("Order Id:", orderId); 
+    
                 message.success("Đơn hàng của bạn đã được đặt thành công!");
                 localStorage.removeItem(`cart_${userId}`);
-                router.push("/");
+                router.replace("/");
+    
             } else {
-                message.error("Đặt hàng thất bại! Vui lòng thử lại.");
+                message.error("Không thể tạo đơn hàng, vui lòng thử lại!");
             }
         } catch (error) {
-            console.error("Lỗi khi gửi đơn hàng:", error);
             message.error("Đã xảy ra lỗi. Vui lòng thử lại!");
+            console.error(error);
         }
-    };
-
-
+    };    
+    
     const columns = [
         {
             title: "Sản phẩm",
@@ -184,6 +190,18 @@ const CheckoutPage = () => {
                     <div className="mb-4">
                         <p className="font-semibold">Ghi chú:</p>
                         <Input.TextArea placeholder="Nhập ghi chú (nếu có)" value={note} onChange={(e) => setNote(e.target.value)} />
+                    </div>
+                    <div className="mb-4">
+                        <p className="font-semibold">Phương thức thanh toán:</p>
+                        <Select
+                            value={paymentMethod}
+                            onChange={(value) => setPaymentMethod(value)}
+                            className="w-full"
+                        >
+                            <Option value="COD">Thanh toán khi nhận hàng (COD)</Option>
+                            <Option value="MOMO">Thanh toán qua Momo</Option>
+                            <Option value="ZALOPAY">Thanh toán qua ZaloPay</Option>
+                        </Select>
                     </div>
                     <div className="text-xl font-semibold">
                         Tổng tiền: {calculateTotalAmount().toLocaleString("vi-VN", { style: "currency", currency: "VND" })}

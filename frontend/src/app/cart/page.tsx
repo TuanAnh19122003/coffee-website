@@ -21,17 +21,20 @@ const CartPage = () => {
         if (!selectedSize) {
             return 0;
         }
+    
+        // Kiểm tra xem sản phẩm có giảm giá không và trả về giá đã giảm
+        const price = selectedSize.discount_price > 0 ? selectedSize.discount_price : selectedSize.priceProduct;
 
-        const price = selectedSize.discount_price > 0 ? selectedSize.discount_price : selectedSize.price;
-
+    
         const formatPrice = (price: any) => {
             if (!price) return 0;
             const cleanPrice = Number(String(price).replace(/\D/g, ""));
             return isNaN(cleanPrice) ? 0 : cleanPrice;
         };
-
+    
         return formatPrice(price);
     };
+    
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
@@ -88,28 +91,18 @@ const CartPage = () => {
             const total = cartItems.reduce((sum, cartItem) => {
                 const product = products.find((product) => product.id === cartItem.id);
                 if (!product) return sum;
-
+    
                 const selectedSize = product.product_sizes.find((size: any) => size.size === cartItem.size);
                 if (!selectedSize) return sum;
-
-                const formatPrice = (price: any) => {
-                    if (!price) return 0;
-                    const cleanPrice = Number(String(price).replace(/\D/g, ""));
-                    return isNaN(cleanPrice) ? 0 : cleanPrice;
-                };
-
-                const price = selectedSize.discount_price > 0
-                    ? formatPrice(selectedSize.discount_price)
-                    : formatPrice(selectedSize.price);
-
-                return sum + price * cartItem.quantity;
+    
+                const price = getProductPrice(product, cartItem.size); // Sử dụng giá đã tính
+                return sum + (price * cartItem.quantity);
             }, 0);
-
-            setTotalAmount(total);
-        } else {
-            setTotalAmount(0);
+    
+            setTotalAmount(total); // Cập nhật tổng số tiền
         }
     };
+    
 
     useEffect(() => {
         updateTotalAmount(cart);

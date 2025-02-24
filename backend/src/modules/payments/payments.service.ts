@@ -5,6 +5,8 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { Payment } from 'src/database/entities/payment.entity';
 import { OrdersService } from '../orders/orders.service';
 import { Format } from 'src/utils/format';
+import * as crypto from 'crypto';
+import axios from 'axios';
 
 @Injectable()
 export class PaymentsService {
@@ -13,6 +15,7 @@ export class PaymentsService {
     private readonly paymentsRepository: Repository<Payment>,
     private readonly ordersService: OrdersService,
   ) {}
+  
 
   async findAll(page: number, limit: number) {
     const [payments, totalItems] = await this.paymentsRepository.findAndCount({
@@ -40,25 +43,33 @@ export class PaymentsService {
     return await this.ordersService.getAll();
   }
   async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
+    console.log('Received payment data:', createPaymentDto); // Kiểm tra dữ liệu gửi lên
+  
     if (!createPaymentDto.orderId) {
       throw new Error('Order ID is required for payment');
     }
-
+  
     const order = await this.ordersService.findOne(createPaymentDto.orderId);
+    console.log('Found order:', order); // Kiểm tra xem order có tồn tại không
+  
     if (!order) {
       throw new NotFoundException(
         `Order with ID ${createPaymentDto.orderId} not found`,
       );
     }
-
+    console.log('🔹 [DEBUG] Order Total:', order.total);
+  
     const payment = this.paymentsRepository.create({
       ...createPaymentDto,
       order,
       paidAmount: order.total,
     });
-    console.log(payment);
+  
+    console.log('Created payment entity:', payment);
+  
     return await this.paymentsRepository.save(payment);
   }
+  
 
   async findOne(id: number): Promise<Payment> {
     const payment = await this.paymentsRepository.findOne({

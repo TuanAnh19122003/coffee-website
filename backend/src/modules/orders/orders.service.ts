@@ -97,7 +97,6 @@ export class OrdersService {
 
       for (const item of orderDetails) {
         if (!item.productId || !item.price || !item.num) {
-          console.log("🚨 Dữ liệu sản phẩm không hợp lệ:", item);
           throw new Error("Danh sách sản phẩm có dữ liệu không hợp lệ");
         }
       }
@@ -114,11 +113,8 @@ export class OrdersService {
         order_date: new Date(),
       });
 
-      console.log("📝 Tạo đơn hàng mới:", newOrder);
-
-
       const savedOrder = await this.ordersRepository.save(newOrder);
-      console.log("✅ Đơn hàng đã lưu vào database:", savedOrder);
+      //console.log("Đơn hàng đã lưu vào database:", savedOrder);
 
       for (const item of orderDetails) {
         totalAmount += item.price * item.num;
@@ -131,7 +127,7 @@ export class OrdersService {
           num: item.num,
         });
 
-        console.log("🛒 Tạo chi tiết đơn hàng:", orderItem);
+        //console.log("Tạo chi tiết đơn hàng:", orderItem);
 
         await this.orderDetailRepository.save(orderItem);
         orderItems.push(orderItem);
@@ -140,13 +136,23 @@ export class OrdersService {
       savedOrder.total = totalAmount;
       savedOrder.orderDetails = orderItems;
 
-      console.log("💰 Cập nhật tổng tiền đơn hàng:", savedOrder);
+      //console.log("Cập nhật tổng tiền đơn hàng:", savedOrder);
 
       return await this.ordersRepository.save(savedOrder);
     } catch (error) {
-      console.error("❌ Lỗi khi tạo đơn hàng:", error);
+      console.error("Lỗi khi tạo đơn hàng:", error);
       throw new Error(`Lỗi khi tạo đơn hàng: ${error.message}`);
     }
+  }
+
+  async updateOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException('Không tìm thấy đơn hàng');
+    }
+
+    order.status = status;
+    return this.ordersRepository.save(order);
   }
 
 }

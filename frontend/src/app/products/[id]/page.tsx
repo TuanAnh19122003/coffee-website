@@ -7,12 +7,12 @@ import { Card, Typography, Image, List, Spin, Alert, Button, Radio, InputNumber,
 const { Title, Paragraph, Text } = Typography;
 
 const ProductDetailPage = () => {
-    const { id } = useParams(); // Lấy ID từ URL
-    const router = useRouter(); // Khởi tạo router để quay lại trang trước
+    const { id } = useParams(); 
+    const router = useRouter();
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState<any>(null);
-    const [quantity, setQuantity] = useState(1); // Thêm state cho số lượng
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         if (!id) return;
@@ -39,36 +39,35 @@ const ProductDetailPage = () => {
     if (!product) return <Alert message="Product not found" type="error" showIcon className="mt-10" />;
 
     const addToCart = () => {
-        const userId = localStorage.getItem("userId"); // Get userId from localStorage
-        if (!userId || !selectedSize) return; // Check if the user is logged in and a size is selected
+        const userId = localStorage.getItem("userId");
+        if (!userId || !selectedSize) return;
     
-        // Get the stored cart (if exists)
         const storedCart = JSON.parse(localStorage.getItem(`cart_${userId}`) || "[]");
     
-        // Check if the product is already in the cart
         const existingProductIndex = storedCart.findIndex(
             (item: any) => item.id === Number(id) && item.size === selectedSize.size
         );
     
+        const price = selectedSize.discount_price > 0
+            ? selectedSize.discount_price
+            : selectedSize.priceProduct || selectedSize.price;
+    
         if (existingProductIndex > -1) {
-            // If the product already exists, update the quantity
             storedCart[existingProductIndex].quantity += quantity;
         } else {
-            // If the product is new, add it to the cart
             storedCart.push({
                 id: Number(id),
                 quantity,
                 size: selectedSize.size,
-                price: selectedSize.priceProduct || selectedSize.price,
+                price,
             });
         }
     
-        // Save the updated cart to localStorage
         localStorage.setItem(`cart_${userId}`, JSON.stringify(storedCart));
     
-        // Notify the user
         message.success("Sản phẩm đã được thêm vào giỏ hàng!");
     };
+    
     
 
     return (
