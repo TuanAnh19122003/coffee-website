@@ -6,7 +6,6 @@ import {
   OneToMany,
   OneToOne,
   CreateDateColumn,
-  JoinColumn,
 } from 'typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { Payment } from 'src/database/entities/payment.entity';
@@ -40,6 +39,5 @@ export class Order {
   orderDetails?: OrderDetail[];
 
   @OneToOne(() => Payment, (payment) => payment.order)
-  @JoinColumn()
   payment?: Payment;
 }

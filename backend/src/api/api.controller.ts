@@ -12,6 +12,8 @@ import { CategoriesService } from 'src/modules/categories/categories.service';
 import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
 import { multerConfig } from 'src/config/multer-config';
 import { Product } from 'src/database/entities/product.entity';
+import { OrdersService } from 'src/modules/orders/orders.service';
+import { CreateOrderDto } from 'src/modules/orders/dto/create-order.dto';
 
 @Controller('api')
 export class ApiController {
@@ -22,6 +24,7 @@ export class ApiController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
     private readonly categoriesService: CategoriesService,
+    private readonly ordersService: OrdersService,
   ) { }
 
   // API lấy tất cả sản phẩm
@@ -176,4 +179,16 @@ export class ApiController {
     return products;
   }
 
+  @Post('/orders')
+  async createOrder(@Body() createOrderDto: CreateOrderDto) {
+    console.log("Dữ liệu nhận được:", createOrderDto);
+    try {
+      const newOrder = await this.ordersService.createOrder(createOrderDto);
+      return { message: 'Đơn hàng đã được tạo thành công', order: newOrder };
+    } catch (error) {
+      console.error("Lỗi backend khi tạo đơn hàng:", error);
+      throw new InternalServerErrorException('Lỗi khi tạo đơn hàng');
+    }
+  }
+  
 }

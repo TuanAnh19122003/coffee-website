@@ -13,14 +13,11 @@ export class OrderDetail {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @ManyToOne(() => Order, (order) => order.orderDetails, {
-    onDelete: 'CASCADE',
-  })
-  order?: Order;
+  @ManyToOne(() => Order, order => order.orderDetails, { onDelete: "CASCADE" }) // ✅ Đảm bảo có quan hệ
+  order: Order;
 
-  @ManyToOne(() => Product)
-  @JoinColumn()
-  product?: Product;
+  @ManyToOne(() => Product, product => product.orderDetails, { eager: true }) // ✅ Đổi productId thành product
+  product: Product;
 
   @Column({ type: 'nvarchar', length: 50 })
   size?: string;

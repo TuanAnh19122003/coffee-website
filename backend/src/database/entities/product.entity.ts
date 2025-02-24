@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Category } from 'src/database/entities/category.entity';
 import { ProductSize } from 'src/database/entities/product_size.entity';
+import { OrderDetail } from './order_detail.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -40,4 +41,7 @@ export class Product {
 
   @OneToMany(() => ProductSize, (productSize) => productSize.product)
   product_sizes?: ProductSize[];
+
+  @OneToMany(() => OrderDetail, orderDetail => orderDetail.product)
+  orderDetails: OrderDetail[];
 }

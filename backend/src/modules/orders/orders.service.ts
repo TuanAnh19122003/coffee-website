@@ -5,14 +5,19 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from 'src/database/entities/order.entity';
 import { UsersService } from '../users/users.service';
 import { Format } from 'src/utils/format';
+import { OrderStatus } from './order-status.enum';
+import { OrderDetail } from 'src/database/entities/order_detail.entity';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @Inject('ORDER_REPOSITORY')
     private readonly ordersRepository: Repository<Order>,
+
+    @Inject('ORDER_DETAIL_REPOSITORY')
+    private readonly orderDetailRepository: Repository<OrderDetail>,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
   async findAll(page: number, limit: number) {
     const [orders, totalItems] = await this.ordersRepository.findAndCount({
       skip: (page - 1) * limit,
@@ -79,4 +84,69 @@ export class OrdersService {
   async remove(id: number): Promise<void> {
     await this.ordersRepository.delete(id);
   }
+
+
+  async createOrder(createOrderDto: CreateOrderDto) {
+    try {
+      console.log("📥 Dữ liệu đơn hàng nhận được:", createOrderDto);
+      const { userId, address, note, orderDetails, status } = createOrderDto;
+
+      if (!userId) {
+        throw new Error("Thiếu userId");
+      }
+
+      for (const item of orderDetails) {
+        if (!item.productId || !item.price || !item.num) {
+          console.log("🚨 Dữ liệu sản phẩm không hợp lệ:", item);
+          throw new Error("Danh sách sản phẩm có dữ liệu không hợp lệ");
+        }
+      }
+
+      let totalAmount = 0;
+      const orderItems: OrderDetail[] = [];
+
+      const newOrder = this.ordersRepository.create({
+        user: { id: Number(userId) },
+        address,
+        note,
+        total: 0,
+        status: status || OrderStatus.PENDING,
+        order_date: new Date(),
+      });
+
+      console.log("📝 Tạo đơn hàng mới:", newOrder);
+
+
+      const savedOrder = await this.ordersRepository.save(newOrder);
+      console.log("✅ Đơn hàng đã lưu vào database:", savedOrder);
+
+      for (const item of orderDetails) {
+        totalAmount += item.price * item.num;
+
+        const orderItem = this.orderDetailRepository.create({
+          order: savedOrder,
+          product: { id: item.productId },
+          size: item.size,
+          price: item.price,
+          num: item.num,
+        });
+
+        console.log("🛒 Tạo chi tiết đơn hàng:", orderItem);
+
+        await this.orderDetailRepository.save(orderItem);
+        orderItems.push(orderItem);
+      }
+
+      savedOrder.total = totalAmount;
+      savedOrder.orderDetails = orderItems;
+
+      console.log("💰 Cập nhật tổng tiền đơn hàng:", savedOrder);
+
+      return await this.ordersRepository.save(savedOrder);
+    } catch (error) {
+      console.error("❌ Lỗi khi tạo đơn hàng:", error);
+      throw new Error(`Lỗi khi tạo đơn hàng: ${error.message}`);
+    }
+  }
+
 }
