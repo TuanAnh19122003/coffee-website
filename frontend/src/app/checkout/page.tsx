@@ -44,6 +44,7 @@ const CheckoutPage = () => {
             setCart(storedCart);
         }
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        console.log("User Data:", userData);
         if (userData.id) {
             setfirstName(userData.firstName || "");
             setlastName(userData.lastName || "");
@@ -181,7 +182,7 @@ const CheckoutPage = () => {
                     </div>
                     <div className="mb-4">
                         <p className="font-semibold">Số điện thoại:</p>
-                        <Input value={phone} disabled />
+                        <Input value={`${phone}`} disabled />
                     </div>
                     <div className="mb-4">
                         <p className="font-semibold">Địa chỉ:</p>

@@ -18,9 +18,6 @@ import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto';
 
 import { OrdersService } from 'src/modules/orders/orders.service';
 import { CreateOrderDto } from 'src/modules/orders/dto/create-order.dto';
-
-import { PaymentsService } from 'src/modules/payments/payments.service';
-import { CreatePaymentDto } from 'src/modules/payments/dto/create-payment.dto';
 import { OrderStatus } from 'src/modules/orders/order-status.enum';
 
 @Controller('api')
@@ -33,7 +30,6 @@ export class ApiController {
     private readonly usersService: UsersService,
     private readonly categoriesService: CategoriesService,
     private readonly ordersService: OrdersService,
-    private readonly paymentsService: PaymentsService,
   ) { }
 
   // API lấy tất cả sản phẩm

@@ -88,7 +88,7 @@ export class OrdersService {
 
   async createOrder(createOrderDto: CreateOrderDto) {
     try {
-      console.log("📥 Dữ liệu đơn hàng nhận được:", createOrderDto);
+      console.log("Dữ liệu đơn hàng nhận được:", createOrderDto);
       const { userId, address, note, orderDetails, status } = createOrderDto;
 
       if (!userId) {

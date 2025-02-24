@@ -4,11 +4,9 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  OneToOne,
   CreateDateColumn,
 } from 'typeorm';
 import { User } from 'src/database/entities/user.entity';
-import { Payment } from 'src/database/entities/payment.entity';
 import { OrderDetail } from 'src/database/entities/order_detail.entity';
 import { OrderStatus } from 'src/modules/orders/order-status.enum';
 
@@ -37,7 +35,4 @@ export class Order {
 
   @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
   orderDetails?: OrderDetail[];
-
-  @OneToOne(() => Payment, (payment) => payment.order)
-  payment?: Payment;
 }

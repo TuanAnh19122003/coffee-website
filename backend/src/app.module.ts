@@ -8,7 +8,6 @@ import { ProductsModule } from './modules/products/products.module';
 import { ProductSizesModule } from './modules/product_sizes/product_sizes.module';
 import { FeedbacksModule } from './modules/feedbacks/feedbacks.module';
 import { OrdersModule } from './modules/orders/orders.module';
-import { PaymentsModule } from './modules/payments/payments.module';
 import { OrderDetailsModule } from './modules/order_details/order_details.module';
 import { ApiController } from './api/api.controller';
 import { AuthService } from './modules/users/auth/auth.service';
@@ -25,7 +24,6 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
     ProductSizesModule,
     FeedbacksModule,
     OrdersModule,
-    PaymentsModule,
     OrderDetailsModule,
   ],
   controllers: [AppController, ApiController],

@@ -184,7 +184,7 @@ const ProductsPage = () => {
                                                 src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}` || "/images/placeholder.png"}
                                                 alt={product.name}
                                                 style={{
-                                                    width: "100%",
+                                                    width: "400px",
                                                     height: "200px",
                                                     objectFit: "cover",
                                                     borderRadius: "8px",
