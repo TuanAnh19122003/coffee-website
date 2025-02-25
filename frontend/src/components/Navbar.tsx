@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Menu, Dropdown, Avatar, Button, Layout, MenuProps } from "antd";
+import { Menu, Dropdown, Avatar, Button, Layout, MenuProps, message } from "antd";
 import { 
     UserOutlined, LogoutOutlined, SettingOutlined, HomeOutlined, 
     ShoppingCartOutlined, InfoCircleOutlined, AppstoreOutlined, 
@@ -56,6 +56,7 @@ export const Navbar = () => {
             setUser(null);
             localStorage.removeItem("userId");
             localStorage.removeItem("user");
+            message.success('Đăng xuất thành công')
             router.push('/auth/login');
         } catch (error) {
             console.error("Logout failed", error);

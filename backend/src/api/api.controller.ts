@@ -126,12 +126,23 @@ export class ApiController {
   @Post('/auth/logout')
   async logout(@Req() req: Request) {
     try {
-      await this.authService.logout(req);
+      if (!(req as any).session || !(req as any).session.user) {
+        throw new UnauthorizedException('Bạn chưa đăng nhập');
+      }
+  
+      // Xóa session
+      (req as any).session.destroy((err) => {
+        if (err) {
+          throw new InternalServerErrorException('Lỗi khi xóa session');
+        }
+      });
+  
       return { message: 'Đăng xuất thành công' };
     } catch (error) {
       throw new InternalServerErrorException('Lỗi khi đăng xuất');
     }
   }
+  
 
   @Get('/me')
   async getProfile(@Req() req: Request) {
